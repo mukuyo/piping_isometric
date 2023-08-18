@@ -21,9 +21,12 @@ def draw_Tjunc() -> None:
 
 
 pipe_info: list = get_pipe_info()
+pipe_num: int = len(pipe_info)
 
 for pipe in pipe_info:
-    print(pipe)
+    print(pipe.name)
+    # if pipe
+    # print(pipe[2][2])
 
 # if yaw >= 0:
     # draw_straight()
