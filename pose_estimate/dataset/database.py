@@ -240,12 +240,12 @@ class CustomDatabase(BaseDatabase):
         super().__init__(database_name)
         self.root = Path(os.path.join('pose_estimate/data',database_name))
         self.img_dir = self.root / 'images'
-        if (self.root/'img_fns.pkl').exists():
-            self.img_fns = read_pickle(str(self.root/'img_fns.pkl'))
-        else:
-            self.img_fns = [Path(fn).name for fn in glob.glob(str(self.img_dir)+'/*.jpg')]
-            save_pickle(self.img_fns, str(self.root/'img_fns.pkl'))
-
+        # if (self.root/'img_fns.pkl').exists():
+        #     self.img_fns = read_pickle(str(self.root/'img_fns.pkl'))
+        # else:
+        #     self.img_fns = [Path(fn).name for fn in glob.glob(str(self.img_dir)+'/*.jpg')]
+        #     save_pickle(self.img_fns, str(self.root/'img_fns.pkl'))
+        self.img_fns = [Path(fn).name for fn in glob.glob(str(self.img_dir)+'/*.jpg')]
         self.colmap_root = self.root / 'colmap'
         if (self.colmap_root / 'sparse' / '0').exists():
             cameras, images, points3d = read_model(str(self.colmap_root / 'sparse' / '0'))
