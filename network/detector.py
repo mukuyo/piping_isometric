@@ -89,8 +89,10 @@ class BaseDetector(nn.Module):
         """
         qn, rfn, hq, wq = scores.shape
         select_id = torch.argmax(scores.flatten(1), 1)
-        select_ref_id = select_id // (hq * wq)
-        select_h_id = (select_id - select_ref_id * hq * wq) // wq
+        # select_ref_id = select_id // (hq * wq)
+        select_ref_id = torch.div(select_id, (hq * wq), rounding_mode='trunc')
+        # select_h_id = (select_id - select_ref_id * hq * wq) // wq
+        select_h_id = torch.div((select_id - select_ref_id * hq * wq), wq, rounding_mode='trunc')
         select_w_id = select_id - select_ref_id * hq * wq - select_h_id * wq
         return select_ref_id, select_w_id, select_h_id
 

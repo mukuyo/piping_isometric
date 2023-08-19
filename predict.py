@@ -42,7 +42,8 @@ def main(args):
     (output_dir / 'images_inter').mkdir(exist_ok=True, parents=True)
     (output_dir / 'images_out_smooth').mkdir(exist_ok=True, parents=True)
 
-    que_num = video2image(args.video, output_dir/'images_raw', 1, args.resolution, args.transpose)
+    # que_num = video2image(args.video, output_dir/'images_raw', 1, args.resolution, args.transpose)
+    que_num = 1
 
     pose_init = None
     hist_pts = []
@@ -72,10 +73,10 @@ def main(args):
         imsave(f'{str(output_dir)}/images_out_smooth/{que_id}-bbox.jpg', bbox_img_)
 
 
-    cmd=[args.ffmpeg, '-y', '-framerate','30', '-r', '30',
-         '-i', f'{output_dir}/images_out_smooth/%d-bbox.jpg',
-         '-c:v', 'libx264','-pix_fmt','yuv420p', f'{output_dir}/video.mp4']
-    subprocess.run(cmd)
+    # cmd=[args.ffmpeg, '-y', '-framerate','30', '-r', '30',
+    #      '-i', f'{output_dir}/images_out_smooth/%d-bbox.jpg',
+    #      '-c:v', 'libx264','-pix_fmt','yuv420p', f'{output_dir}/video.mp4']
+    # subprocess.run(cmd)
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()

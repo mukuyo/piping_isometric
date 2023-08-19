@@ -11,6 +11,7 @@ class VGGBNPretrain(nn.Module):
         super().__init__()
         self.features = _make_vgg_layers(vgg_cfgs['A'], True)
         self.splits=vgg_split['A']
+
         self._initialize_weights()
         self.output_index = output_index
 
@@ -31,7 +32,7 @@ class VGGBNPretrain(nn.Module):
             raise NotImplementedError
 
     def _initialize_weights(self):
-        pretrain_model = models.vgg11_bn(True)
+        pretrain_model = models.vgg11_bn()
         state_dict = pretrain_model.state_dict()
         new_state_dict = OrderedDict()
         for k,v in state_dict.items():
