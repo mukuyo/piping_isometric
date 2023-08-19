@@ -13,7 +13,7 @@ from prepare import video2image
 from utils.base_utils import load_cfg, project_points
 from utils.draw_utils import pts_range_to_bbox_pts, draw_bbox_3d
 from utils.pose_utils import pnp
-
+import math
 
 def weighted_pts(pts_list, weight_num=10, std_inv=10):
     weights=np.exp(-(np.arange(weight_num)/std_inv)**2)[::-1] # wn
@@ -47,30 +47,36 @@ def main(args):
 
     pose_init = None
     hist_pts = []
-    for que_id in tqdm(range(que_num)):
-        img = imread(str(output_dir/'images_raw'/f'frame{que_id}.jpg'))
-        # generate a pseudo K
-        h, w, _ = img.shape
-        f=np.sqrt(h**2+w**2)
-        K = np.asarray([[f,0,w/2],[0,f,h/2],[0,0,1]],np.float32)
+    que_id = 0
+    # for que_id in tqdm(range(que_num)):
+    img = imread(str(output_dir/'images_raw'/f'frame{que_id}.jpg'))
+    # generate a pseudo K
+    h, w, _ = img.shape
+    f=np.sqrt(h**2+w**2)
+    K = np.asarray([[f,0,w/2],[0,f,h/2],[0,0,1]],np.float32)
 
-        if pose_init is not None:
-            estimator.cfg['refine_iter'] = 1 # we only refine one time after initialization
-        pose_pr, inter_results = estimator.predict(img, K, pose_init=pose_init)
-        pose_init = pose_pr
+    if pose_init is not None:
+        estimator.cfg['refine_iter'] = 1 # we only refine one time after initialization
+    pose_pr, inter_results = estimator.predict(img, K, pose_init=pose_init)
+    pose_init = pose_pr
 
-        pts, _ = project_points(object_bbox_3d, pose_pr, K)
-        bbox_img = draw_bbox_3d(img, pts, (0,0,255))
-        imsave(f'{str(output_dir)}/images_out/{que_id}-bbox.jpg', bbox_img)
-        np.save(f'{str(output_dir)}/images_out/{que_id}-pose.npy', pose_pr)
-        imsave(f'{str(output_dir)}/images_inter/{que_id}.jpg', visualize_intermediate_results(img, K, inter_results, estimator.ref_info, object_bbox_3d))
+    pts, _ = project_points(object_bbox_3d, pose_pr, K)
+    bbox_img = draw_bbox_3d(img, pts, (0,0,255))
+    imsave(f'{str(output_dir)}/images_out/{que_id}-bbox.jpg', bbox_img)
 
-        hist_pts.append(pts)
-        pts_ = weighted_pts(hist_pts, weight_num=args.num, std_inv=args.std)
-        pose_ = pnp(object_bbox_3d, pts_, K)
-        pts__, _ = project_points(object_bbox_3d, pose_, K)
-        bbox_img_ = draw_bbox_3d(img, pts__, (0,0,255))
-        imsave(f'{str(output_dir)}/images_out_smooth/{que_id}-bbox.jpg', bbox_img_)
+    print(math.atan2(pose_pr[1][0], pose_pr[0][0]), math.atan2(pose_pr[1][0], pose_pr[0][0]) * 180 /3.14)
+    print(math.asin(-pose_pr[2][0]), math.asin(-pose_pr[2][0]) * 180 /3.14)
+    print(math.atan2(pose_pr[2][1], pose_pr[2][2]), math.atan2(pose_pr[2][1], pose_pr[2][2]) * 180 /3.14)
+
+    np.save(f'{str(output_dir)}/images_out/{que_id}-pose.npy', pose_pr)
+    imsave(f'{str(output_dir)}/images_inter/{que_id}.jpg', visualize_intermediate_results(img, K, inter_results, estimator.ref_info, object_bbox_3d))
+
+    hist_pts.append(pts)
+    pts_ = weighted_pts(hist_pts, weight_num=args.num, std_inv=args.std)
+    pose_ = pnp(object_bbox_3d, pts_, K)
+    pts__, _ = project_points(object_bbox_3d, pose_, K)
+    bbox_img_ = draw_bbox_3d(img, pts__, (0,0,255))
+    imsave(f'{str(output_dir)}/images_out_smooth/{que_id}-bbox.jpg', bbox_img_)
 
 
     # cmd=[args.ffmpeg, '-y', '-framerate','30', '-r', '30',
