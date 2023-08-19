@@ -118,8 +118,8 @@ class Gen6DEstimator:
     def _load_module(cfg):
         refiner_cfg = load_cfg(cfg)
         refiner = name2network[refiner_cfg['network']](refiner_cfg)
-        # state_dict = torch.load(f'data/model/{refiner_cfg["name"]}/model_best.pth')
-        # refiner.load_state_dict(state_dict['network_state_dict'])
+        state_dict = torch.load(f'data/model/{refiner_cfg["name"]}/model_best.pth')
+        refiner.load_state_dict(state_dict['network_state_dict'])
         # print(f'load from {refiner_cfg["name"]}/model_best.pth step {state_dict["step"]}')
         refiner.cuda().eval()
         return refiner
