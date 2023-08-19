@@ -7,9 +7,9 @@ from skimage.io import imsave, imread
 from tqdm import tqdm
 
 from pose_estimate.dataset.database import parse_database_name, get_ref_point_cloud
-from pose_estimate.estimator import name2estimator
-from pose_estimate.eval import visualize_intermediate_results
-from pose_estimate.prepare import video2image
+from pose_estimate.src.estimator import name2estimator
+from pose_estimate.src.eval import visualize_intermediate_results
+from pose_estimate.src.prepare import video2image
 from pose_estimate.utils.base_utils import load_cfg, project_points
 from pose_estimate.utils.draw_utils import pts_range_to_bbox_pts, draw_bbox_3d
 from pose_estimate.utils.pose_utils import pnp
