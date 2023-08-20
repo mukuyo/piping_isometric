@@ -1,2 +1,3 @@
-pose_estimate/data/*
 data/*
+__pycache__
+.python-version
