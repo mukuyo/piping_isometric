@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['bent', 'junction']
+
+roboflow:
+  workspace: takumu-13hkf
+  project: w-z6gwv
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/takumu-13hkf/w-z6gwv/dataset/2
