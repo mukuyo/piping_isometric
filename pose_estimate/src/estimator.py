@@ -170,15 +170,17 @@ class Gen6DEstimator:
         if self.refiner is not None:
             self.refiner.load_ref_imgs(database, ref_ids_all)
 
-    def predict(self, que_img, que_K, pose_init=None):
+    def predict(self, que_img, result, que_K, pose_init=None):
         inter_results={}
-
+        pose_init = None
         if pose_init is None:
             # stage 1: detection
             with torch.no_grad():
                 detection_outputs = self.detector.detect_que_imgs(que_img[None])
                 position = detection_outputs['positions'][0]
-                # position = np.array((700.5, 285.5), dtype=float) 
+                # position = np.array((result.position[0], result.position[1]), dtype=float) 
+                # 288.31536865234375, 351.4462890625
+                # position = np.array((288, 351), dtype=float) 
                 scale_r2q = detection_outputs['scales'][0]
 
             # crop the image according to the detected scale and the detected position
@@ -186,7 +188,6 @@ class Gen6DEstimator:
             inter_results['det_position'] = position
             inter_results['det_scale_r2q'] = scale_r2q
             inter_results['det_que_img'] = que_img_
-
             # stage 2: viewpoint selection
             with torch.no_grad():
                 selection_results = self.selector.select_que_imgs(que_img_[None])

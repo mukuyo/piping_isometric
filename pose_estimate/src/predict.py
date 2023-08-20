@@ -10,12 +10,11 @@ from tqdm import tqdm
 from pose_estimate.dataset.database import parse_database_name, get_ref_point_cloud
 from pose_estimate.src.estimator import name2estimator
 from pose_estimate.src.eval import visualize_intermediate_results
-from pose_estimate.src.prepare import video2image
 from pose_estimate.utils.base_utils import load_cfg, project_points
 from pose_estimate.utils.draw_utils import pts_range_to_bbox_pts, draw_bbox_3d
 from pose_estimate.utils.pose_utils import pnp
 
-# from common.pipe import Pipe
+from common.pipe import Pipe
 
 def weighted_pts(pts_list, weight_num=10, std_inv=10):
     weights=np.exp(-(np.arange(weight_num)/std_inv)**2)[::-1] # wn
@@ -27,85 +26,85 @@ def weighted_pts(pts_list, weight_num=10, std_inv=10):
     pts = np.sum(np.asarray(pts_list) * weights[:,None,None],0)/np.sum(weights)
     return pts
 
-def main(args):
-    cfg = load_cfg(args.cfg)
-    ref_database = parse_database_name(args.database)
-    estimator = name2estimator[cfg['type']](cfg)
-    estimator.build(ref_database, split_type='all')
+class Pose:
+    def __init__(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--cfg', type=str, default='pose_estimate/configs/gen6d_pretrain.yaml')
+        parser.add_argument('--database', type=str, default="cu")
+        parser.add_argument('--output', type=str, default="pose_estimate/data/custom/test")
 
-    object_pts = get_ref_point_cloud(ref_database)
-    object_bbox_3d = pts_range_to_bbox_pts(np.max(object_pts,0), np.min(object_pts,0))
+        # input video process
+        parser.add_argument('--video', type=str, default="data/custom/video/mouse-test.mp4")
+        parser.add_argument('--resolution', type=int, default=960)
+        parser.add_argument('--transpose', action='store_true', dest='transpose', default=False)
 
-    output_dir = Path(args.output)
-    output_dir.mkdir(exist_ok=True, parents=True)
+        # smooth poses
+        parser.add_argument('--num', type=int, default=5)
+        parser.add_argument('--std', type=float, default=2.5)
 
-    (output_dir / 'images_raw').mkdir(exist_ok=True, parents=True)
-    (output_dir / 'images_out').mkdir(exist_ok=True, parents=True)
-    (output_dir / 'images_inter').mkdir(exist_ok=True, parents=True)
-    (output_dir / 'images_out_smooth').mkdir(exist_ok=True, parents=True)
+        parser.add_argument('--ffmpeg', type=str, default='ffmpeg')
+        self.__args = parser.parse_args()
+        self.cfg = load_cfg(self.__args.cfg)
 
-    # que_num = video2image(args.video, output_dir/'images_raw', 1, args.resolution, args.transpose)
+        self.__output_dir = Path(self.__args.output)
+        self.__output_dir.mkdir(exist_ok=True, parents=True)
 
-    pose_init = None
-    hist_pts = []
-    que_id = 0
-    # for que_id in tqdm(range(que_num)):
-    img = imread(str(output_dir/'images_raw'/f'frame{que_id}.jpg'))
+        (self.__output_dir / 'images_raw').mkdir(exist_ok=True, parents=True)
+        (self.__output_dir / 'images_out').mkdir(exist_ok=True, parents=True)
+        (self.__output_dir / 'images_inter').mkdir(exist_ok=True, parents=True)
+        (self.__output_dir / 'images_out_smooth').mkdir(exist_ok=True, parents=True)
 
-    h, w, _ = img.shape
-    f=np.sqrt(h**2+w**2)
-    K = np.asarray([[f,0,w/2],[0,f,h/2],[0,0,1]],np.float32)
+        self.__pose_init = None
+        self.__hist_pts = []
+        self.__que_id = 0
 
-    if pose_init is not None:
-        estimator.cfg['refine_iter'] = 1 # we only refine one time after initialization
-    pose_pr, inter_results = estimator.predict(img, K, pose_init=pose_init)
-    pose_init = pose_pr
+        self.__estimator = []
+        self.__object_bbox_3d = []
+        class_num = 2
+        name = "custom/bent"
 
-    pts, _ = project_points(object_bbox_3d, pose_pr, K)
-    bbox_img = draw_bbox_3d(img, pts, (0,0,255))
-    imsave(f'{str(output_dir)}/images_out/{que_id}-bbox.jpg', bbox_img)
+        # self.estimator_bent = name2estimator[self.cfg['type']](self.cfg)
+        self.estimator_junction = name2estimator[self.cfg['type']](self.cfg)
+        # self.estimator_bent.build(parse_database_name("custom/bent"), split_type='all')
+        self.estimator_junction.build(parse_database_name("custom/junction"), split_type='all')
 
-    print(math.atan2(pose_pr[1][0], pose_pr[0][0]), math.atan2(pose_pr[1][0], pose_pr[0][0]) * 180 /3.14)
-    print(math.asin(-pose_pr[2][0]), math.asin(-pose_pr[2][0]) * 180 /3.14)
-    print(math.atan2(pose_pr[2][1], pose_pr[2][2]), math.atan2(pose_pr[2][1], pose_pr[2][2]) * 180 /3.14)
+        # self.object_bbox_3d_bent = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name("custom/bent")),0), np.min(get_ref_point_cloud(parse_database_name("custom/bent")),0))
+        self.object_bbox_3d_junction = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name("custom/junction")),0), np.min(get_ref_point_cloud(parse_database_name("custom/junction")),0))
 
-    np.save(f'{str(output_dir)}/images_out/{que_id}-pose.npy', pose_pr)
-    imsave(f'{str(output_dir)}/images_inter/{que_id}.jpg', visualize_intermediate_results(img, K, inter_results, estimator.ref_info, object_bbox_3d))
+    def predict(self, img_path, result: Pipe):
+        img = imread(str(img_path))
+        h, w, _ = img.shape
+        f=np.sqrt(h**2+w**2)
+        K = np.asarray([[f,0,w/2],[0,f,h/2],[0,0,1]],np.float32)
+        
+        # if result.name == "bent":
+        #     self.estimator_bent.cfg['refine_iter'] = 1 # we only refine one time after initialization
+        #     pose_pr, inter_results = self.estimator_bent.predict(img, result, K, pose_init=self.__pose_init)
+        #     pts, _ = project_points(self.object_bbox_3d_bent, pose_pr, K)
+        # else:
+        if self.__pose_init is not None:
+            self.estimator_junction.cfg['refine_iter'] = 1 # we only refine one time after initialization
+    
+        pose_pr, inter_results = self.estimator_junction.predict(img, result, K, pose_init=self.__pose_init)
+        pts, _ = project_points(self.object_bbox_3d_junction, pose_pr, K)
+        self.__pose_init = pose_pr
+        bbox_img = draw_bbox_3d(img, pts, (0,0,255))
+        imsave(f'{str(self.__output_dir)}/images_out/{self.__que_id}-bbox.jpg', bbox_img)
+        np.save(f'{str(self.__output_dir)}/images_out/{self.__que_id}-pose.npy', pose_pr)
+        if result.name == "bent":
+            imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(img, K, inter_results, self.estimator_bent.ref_info, self.object_bbox_3d_bent))
+        else:
+            imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(img, K, inter_results, self.estimator_junction.ref_info, self.object_bbox_3d_junction))
+        # self.__hist_pts.append(pts)
+        # pts_ = weighted_pts(self.__hist_pts, weight_num=self.__args.num, std_inv=self.__args.std)
+        # pose_ = pnp(self.__object_bbox_3d[result.class_num], pts_, K)
+        # pts__, _ = project_points(self.__object_bbox_3d[result.class_num], pose_, K)
+        # bbox_img_ = draw_bbox_3d(img, pts__, (0,0,255))
+        # imsave(f'{str(self.__output_dir)}/images_out_smooth/{self.__que_id}-bbox.jpg', bbox_img_)
 
-    hist_pts.append(pts)
-    pts_ = weighted_pts(hist_pts, weight_num=args.num, std_inv=args.std)
-    pose_ = pnp(object_bbox_3d, pts_, K)
-    pts__, _ = project_points(object_bbox_3d, pose_, K)
-    bbox_img_ = draw_bbox_3d(img, pts__, (0,0,255))
-    imsave(f'{str(output_dir)}/images_out_smooth/{que_id}-bbox.jpg', bbox_img_)
+        roll = math.atan2(pose_pr[1][0], pose_pr[0][0])
+        pitch = math.asin(-pose_pr[2][0])
+        yaw = math.atan2(pose_pr[2][1], pose_pr[2][2])
+        pose_result = Pipe(class_num=result.class_num, name=result.name, position=result.position, size=result.size, pose=(roll, pitch, yaw))
 
-    # cmd=[args.ffmpeg, '-y', '-framerate','30', '-r', '30',
-    #      '-i', f'{output_dir}/images_out_smooth/%d-bbox.jpg',
-    #      '-c:v', 'libx264','-pix_fmt','yuv420p', f'{output_dir}/video.mp4']
-    # subprocess.run(cmd)
-    position = (0, 0)
-    roll = math.atan2(pose_pr[1][0], pose_pr[0][0])
-    pitch = math.asin(-pose_pr[2][0])
-    yaw = math.atan2(pose_pr[2][1], pose_pr[2][2])
-    # pipe = Pipe("bent", position, pose=(roll, pitch, yaw))
-
-    return 
-
-def run_predict():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', type=str, default='pose_estimate/configs/gen6d_pretrain.yaml')
-    parser.add_argument('--database', type=str, default="custom/junction")
-    parser.add_argument('--output', type=str, default="pose_estimate/data/custom/test")
-
-    # input video process
-    parser.add_argument('--video', type=str, default="pose_estimate/data/custom/video/mouse-test.mp4")
-    parser.add_argument('--resolution', type=int, default=960)
-    parser.add_argument('--transpose', action='store_true', dest='transpose', default=False)
-
-    # smooth poses
-    parser.add_argument('--num', type=int, default=5)
-    parser.add_argument('--std', type=float, default=2.5)
-
-    parser.add_argument('--ffmpeg', type=str, default='ffmpeg')
-    args = parser.parse_args()
-    main(args)
+        return pose_result
