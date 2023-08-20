@@ -240,12 +240,13 @@ class CustomDatabase(BaseDatabase):
         super().__init__(database_name)
         self.root = Path(os.path.join('pose_estimate/data',database_name))
         self.img_dir = self.root / 'images'
-        # if (self.root/'img_fns.pkl').exists():
-        #     self.img_fns = read_pickle(str(self.root/'img_fns.pkl'))
-        # else:
-        #     self.img_fns = [Path(fn).name for fn in glob.glob(str(self.img_dir)+'/*.jpg')]
-        #     save_pickle(self.img_fns, str(self.root/'img_fns.pkl'))
-        self.img_fns = [Path(fn).name for fn in glob.glob(str(self.img_dir)+'/*.jpg')]
+        
+        if (self.root/'img_fns.pkl').exists():
+            self.img_fns = read_pickle(str(self.root/'img_fns.pkl'))
+        else:
+            self.img_fns = [Path(fn).name for fn in glob.glob(str(self.img_dir)+'/*.jpg')]
+            save_pickle(self.img_fns, str(self.root/'img_fns.pkl'))
+
         self.colmap_root = self.root / 'colmap'
         if (self.colmap_root / 'sparse' / '0').exists():
             cameras, images, points3d = read_model(str(self.colmap_root / 'sparse' / '0'))
@@ -417,13 +418,13 @@ class GoogleScannedObjectDatabase(BaseDatabase):
         assert(background in ['black','white'])
         self.resolution = resolution
         self.background = background
-        self.prefix=f'pose_estimate/data/google_scanned_objects/{model_name}'
+        self.prefix=f'data/google_scanned_objects/{model_name}'
 
         if self.resolution!='raw':
             resolution = int(self.resolution)
 
             # cache images
-            self.img_cache_prefix = f'pose_estimate/data/google_scanned_objects/{model_name}/rgb_{resolution}'
+            self.img_cache_prefix = f'data/google_scanned_objects/{model_name}/rgb_{resolution}'
             Path(self.img_cache_prefix).mkdir(exist_ok=True,parents=True)
             for img_id in self.get_img_ids():
                 fn = Path(self.img_cache_prefix) / f'{int(img_id):06}.jpg'
@@ -433,7 +434,7 @@ class GoogleScannedObjectDatabase(BaseDatabase):
                 imsave(str(fn), img)
 
             # cache masks
-            self.mask_cache_prefix = f'pose_estimate/data/google_scanned_objects/{model_name}/mask_{resolution}'
+            self.mask_cache_prefix = f'data/google_scanned_objects/{model_name}/mask_{resolution}'
             Path(self.mask_cache_prefix).mkdir(exist_ok=True, parents=True)
             for img_id in self.get_img_ids():
                 fn = Path(self.mask_cache_prefix) / f'{int(img_id):06}.png'
@@ -445,7 +446,7 @@ class GoogleScannedObjectDatabase(BaseDatabase):
 
         #################compute object center###################
         self.model_name = model_name
-        object_center_fn = f'pose_estimate/data/google_scanned_objects/{model_name}/object_center.pkl'
+        object_center_fn = f'data/google_scanned_objects/{model_name}/object_center.pkl'
         if os.path.exists(object_center_fn):
             self.object_center = read_pickle(object_center_fn)
         else:
@@ -456,7 +457,7 @@ class GoogleScannedObjectDatabase(BaseDatabase):
         self.img_id2pose={}
 
         ################compute object vertical direction############
-        vert_dir_fn = f'pose_estimate/data/google_scanned_objects/{model_name}/object_vert.pkl'
+        vert_dir_fn = f'data/google_scanned_objects/{model_name}/object_vert.pkl'
         if os.path.exists(vert_dir_fn):
             self.object_vert = read_pickle(vert_dir_fn)
         else:
@@ -467,7 +468,7 @@ class GoogleScannedObjectDatabase(BaseDatabase):
             save_pickle(self.object_vert, vert_dir_fn)
 
         #################compute object diameter###################
-        object_diameter_fn = f'pose_estimate/data/google_scanned_objects/{model_name}/object_diameter.pkl'
+        object_diameter_fn = f'data/google_scanned_objects/{model_name}/object_diameter.pkl'
         if os.path.exists(object_diameter_fn):
             self.object_diameter = read_pickle(object_diameter_fn)
         else:
@@ -482,7 +483,7 @@ class GoogleScannedObjectDatabase(BaseDatabase):
         return depth
 
     def get_object_points(self):
-        fn = f'pose_estimate/data/gso_cache/{self.model_name}-pts.pkl'
+        fn = f'data/gso_cache/{self.model_name}-pts.pkl'
         if os.path.exists(fn): return read_pickle(fn)
         obj_pts = []
         for img_id in self.get_img_ids():
@@ -606,7 +607,7 @@ class ShapeNetRenderDatabase(BaseDatabase):
         self.object_vert = np.asarray([0,1,0],np.float32)
 
         self.img_id2camera={}
-        cache_fn=Path(f'pose_estimate/data/shapenet/shapenet_cache/{self.category}-{self.model_name}-{self.render_setting}.pkl')
+        cache_fn=Path(f'data/shapenet/shapenet_cache/{self.category}-{self.model_name}-{self.render_setting}.pkl')
         if cache_fn.exists():
             self.img_id2camera=read_pickle(str(cache_fn))
         else:
@@ -616,7 +617,7 @@ class ShapeNetRenderDatabase(BaseDatabase):
             save_pickle(self.img_id2camera,str(cache_fn))
 
         self.model_verts=None
-        cache_verts_fn = Path(f'pose_estimate/data/shapenet/shapenet_cache/{self.category}-{self.model_name}-{self.render_setting}-verts.pkl')
+        cache_verts_fn = Path(f'data/shapenet/shapenet_cache/{self.category}-{self.model_name}-{self.render_setting}-verts.pkl')
         if cache_verts_fn.exists():
             self.model_verts, self.object_center, self.object_diameter = read_pickle(str(cache_verts_fn))
         else:

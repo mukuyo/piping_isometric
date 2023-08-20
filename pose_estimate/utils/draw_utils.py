@@ -292,3 +292,27 @@ def draw_bbox_3d(img,pts2d,color=(0,255,0)):
     img = cv2.line(img,tuple(pts2d[2]),tuple(pts2d[6]),color,2)
     img = cv2.line(img,tuple(pts2d[3]),tuple(pts2d[7]),color,2)
     return img
+
+
+def draw_bbox_3d_summary(img,pts2ds,color=(0,255,0)):
+    # img = draw_keypoints_summary(img, pts2ds, colors=red_colors)
+    for pts2d in pts2ds:
+        red_colors=np.zeros([8,3],np.uint8)
+        red_colors[:,0]=255
+    
+        pts2d = np.round(pts2d).astype(np.int32)
+        img = cv2.line(img,tuple(pts2d[0]),tuple(pts2d[1]),color,2)
+        img = cv2.line(img,tuple(pts2d[1]),tuple(pts2d[2]),color,2)
+        img = cv2.line(img,tuple(pts2d[2]),tuple(pts2d[3]),color,2)
+        img = cv2.line(img,tuple(pts2d[3]),tuple(pts2d[0]),color,2)
+
+        img = cv2.line(img,tuple(pts2d[4]),tuple(pts2d[5]),color,2)
+        img = cv2.line(img,tuple(pts2d[5]),tuple(pts2d[6]),color,2)
+        img = cv2.line(img,tuple(pts2d[6]),tuple(pts2d[7]),color,2)
+        img = cv2.line(img,tuple(pts2d[7]),tuple(pts2d[4]),color,2)
+
+        img = cv2.line(img,tuple(pts2d[0]),tuple(pts2d[4]),color,2)
+        img = cv2.line(img,tuple(pts2d[1]),tuple(pts2d[5]),color,2)
+        img = cv2.line(img,tuple(pts2d[2]),tuple(pts2d[6]),color,2)
+        img = cv2.line(img,tuple(pts2d[3]),tuple(pts2d[7]),color,2)
+    return img
