@@ -31,18 +31,12 @@ class Pose:
         parser = argparse.ArgumentParser()
         parser.add_argument('--cfg', type=str, default='pose_estimate/configs/gen6d_pretrain.yaml')
         parser.add_argument('--database', type=str, default="cu")
-        parser.add_argument('--output', type=str, default="pose_estimate/data/custom/test")
-
-        # input video process
-        parser.add_argument('--video', type=str, default="data/custom/video/mouse-test.mp4")
-        parser.add_argument('--resolution', type=int, default=960)
-        parser.add_argument('--transpose', action='store_true', dest='transpose', default=False)
+        parser.add_argument('--output', type=str, default="data/pose/custom/test")
 
         # smooth poses
         parser.add_argument('--num', type=int, default=5)
         parser.add_argument('--std', type=float, default=2.5)
 
-        parser.add_argument('--ffmpeg', type=str, default='ffmpeg')
         self.__args = parser.parse_args()
         self.cfg = load_cfg(self.__args.cfg)
 

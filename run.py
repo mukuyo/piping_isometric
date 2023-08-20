@@ -2,8 +2,8 @@ from object_detection.detect import Detect
 from pose_estimate.src.predict import Pose
 from common.pipe import Pipe
 
-model_path = './runs/detect/train/weights/best.pt'
-img_path = './data/pipe/test/images/1000.png'
+model_path = './data/detect/weights/best.pt'
+img_path = './data/detect/datasets/pipe/test/images/1000.png'
 
 class Main:
     def __init__(self):
