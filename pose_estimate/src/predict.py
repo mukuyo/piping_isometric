@@ -58,12 +58,12 @@ class Pose:
         name = "custom/bent"
 
         self.estimator_bent = name2estimator[self.cfg['type']](self.cfg)
-        self.estimator_junction = name2estimator[self.cfg['type']](self.cfg)
+        self.estimator_t_junc = name2estimator[self.cfg['type']](self.cfg)
         self.estimator_bent.build(parse_database_name("custom/bent"), split_type='all')
-        self.estimator_junction.build(parse_database_name("custom/junction"), split_type='all')
+        self.estimator_t_junc.build(parse_database_name("custom/t-junc"), split_type='all')
 
         self.object_bbox_3d_bent = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name("custom/bent")),0), np.min(get_ref_point_cloud(parse_database_name("custom/bent")),0))
-        self.object_bbox_3d_junction = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name("custom/junction")),0), np.min(get_ref_point_cloud(parse_database_name("custom/junction")),0))
+        self.object_bbox_3d_t_junc = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name("custom/t-junc")),0), np.min(get_ref_point_cloud(parse_database_name("custom/t-junc")),0))
 
     def predict(self, img_path, results: Pipe):
         points = []
@@ -78,8 +78,8 @@ class Pose:
                 pose_pr, inter_results = self.estimator_bent.predict(self.img, result, K, pose_init=self.__pose_init)
                 pts, _ = project_points(self.object_bbox_3d_bent, pose_pr, K)
             else:
-                pose_pr, inter_results = self.estimator_junction.predict(self.img, result, K, pose_init=self.__pose_init)
-                pts, _ = project_points(self.object_bbox_3d_junction, pose_pr, K)
+                pose_pr, inter_results = self.estimator_t_junc.predict(self.img, result, K, pose_init=self.__pose_init)
+                pts, _ = project_points(self.object_bbox_3d_t_junc, pose_pr, K)
             points.append(pts)
             self.__pose_init = pose_pr
             # bbox_img = draw_bbox_3d(img, pts, (0,0,255))
