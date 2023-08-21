@@ -1,6 +1,6 @@
 from object_detection.detect import Detect
 from pose_estimate.src.predict import Pose
-from draw_isometric.main import Isometric
+from draw_isometric.isometric import Isometric
 from common.pipe import Pipe
 
 model_path = './data/detect/weights/best.pt'

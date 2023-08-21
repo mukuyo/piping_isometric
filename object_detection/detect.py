@@ -9,7 +9,7 @@ class Detect():
         pred = self.__yolo_model.predict(
             source=img_path,
             save=True,
-            conf=0.25,
+            conf=0.3,
         )
 
         detection_results = []

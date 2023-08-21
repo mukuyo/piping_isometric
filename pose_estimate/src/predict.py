@@ -48,14 +48,7 @@ class Pose:
         (self.__output_dir / 'images_inter').mkdir(exist_ok=True, parents=True)
         (self.__output_dir / 'images_out_smooth').mkdir(exist_ok=True, parents=True)
 
-        self.__pose_init = None
-        self.__hist_pts = []
         self.__que_id = 0
-
-        self.__estimator = []
-        self.__object_bbox_3d = []
-        class_num = 2
-        name = "custom/bent"
 
         self.estimator_bent = name2estimator[self.cfg['type']](self.cfg)
         self.estimator_t_junc = name2estimator[self.cfg['type']](self.cfg)
@@ -68,26 +61,25 @@ class Pose:
     def predict(self, img_path, results: Pipe):
         points = []
         pose_results = []
-        for result in results:
+        for i, result in enumerate(results):
             self.img = imread(str(img_path))
             h, w, _ = self.img.shape
             f=np.sqrt(h**2+w**2)
             K = np.asarray([[f,0,w/2],[0,f,h/2],[0,0,1]],np.float32)
             
             if result.name == "bent":
-                pose_pr, inter_results = self.estimator_bent.predict(self.img, result, K, pose_init=self.__pose_init)
+                pose_pr, inter_results = self.estimator_bent.predict(self.img, result, K, pose_init=None)
                 pts, _ = project_points(self.object_bbox_3d_bent, pose_pr, K)
             else:
-                pose_pr, inter_results = self.estimator_t_junc.predict(self.img, result, K, pose_init=self.__pose_init)
+                pose_pr, inter_results = self.estimator_t_junc.predict(self.img, result, K, pose_init=None)
                 pts, _ = project_points(self.object_bbox_3d_t_junc, pose_pr, K)
             points.append(pts)
-            self.__pose_init = pose_pr
             # bbox_img = draw_bbox_3d(img, pts, (0,0,255))
             # imsave(f'{str(self.__output_dir)}/images_out/{self.__que_id}-bbox.jpg', bbox_img)
-            # if result.name == "bent":
-            #     imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(img, K, inter_results, self.estimator_bent.ref_info, self.object_bbox_3d_bent))
+            if result.name == "bent":
+                imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.estimator_bent.ref_info, self.object_bbox_3d_bent))
             # else:
-            #     imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(img, K, inter_results, self.estimator_junction.ref_info, self.object_bbox_3d_junction))
+                # imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.estimator_t_junc.ref_info, self.object_bbox_3d_t_junc))
             # self.__hist_pts.append(pts)
             # pts_ = weighted_pts(self.__hist_pts, weight_num=self.__args.num, std_inv=self.__args.std)
             # pose_ = pnp(self.__object_bbox_3d[result.class_num], pts_, K)
@@ -98,7 +90,8 @@ class Pose:
             roll = math.atan2(pose_pr[1][0], pose_pr[0][0])
             pitch = math.asin(-pose_pr[2][0])
             yaw = math.atan2(pose_pr[2][1], pose_pr[2][2])
-            pose_result = Pipe(class_num=result.class_num, name=result.name, position=result.position, size=result.size, pose=(roll, pitch, yaw))
+
+            pose_result = Pipe(class_num=result.class_num, name=result.name, position=result.position, size=result.size, pose=(roll, pitch, yaw), detection_num=i, rt_matrix=pose_pr)
             pose_results.append(pose_result)
 
         self.result_desplay(points)

@@ -180,8 +180,10 @@ class Gen6DEstimator:
                 # position = detection_outputs['positions'][0]
                 position = np.array((result.position[0], result.position[1]), dtype=float) 
                 # 288.31536865234375, 351.4462890625
-                # position = np.array((288, 351), dtype=float) 
-                scale_r2q = detection_outputs['scales'][0]
+                # position = np.array((288, 351), dtype=float)
+                scale_r2q = np.array((result.size/85), dtype=float) 
+                # scale_r2q = detection_outputs['scales'][0]
+                # print(scale_r2q)
 
             # crop the image according to the detected scale and the detected position
             que_img_, _ = transformation_crop(que_img, position, 1/scale_r2q, 0, self.cfg['ref_resolution'])  # h,w,3
@@ -212,7 +214,7 @@ class Gen6DEstimator:
         if self.refiner is not None:
             refine_poses = [pose_pr]
             for k in range(self.cfg['refine_iter']):
-                pose_pr = self.refiner.refine_que_imgs(que_img, que_K, pose_pr, size=128, ref_num=6, ref_even=True)
+                pose_pr = self.refiner.refine_que_imgs(que_img, que_K, pose_pr, size=128, ref_num=5, ref_even=True)
                 refine_poses.append(pose_pr)
             inter_results['refine_poses'] = refine_poses
         return pose_pr, inter_results
