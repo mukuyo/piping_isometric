@@ -1,5 +1,4 @@
 from numpy import ndarray
-
 class Pipe:
     """pipe_info"""
     def __init__(self, class_num: int, name: str, position: list, size: float, pose: list = [0, 0, 0], detection_num: int = 0, rt_matrix: ndarray = ndarray([3, 4])):
@@ -11,7 +10,7 @@ class Pipe:
         self.__detection_num: int = detection_num
 
         self.__r_matrix: ndarray = rt_matrix[:, 0:3]
-        self.__t_matrix: ndarray = rt_matrix[:, 3:4].T
+        self.__t_matrix: ndarray = rt_matrix[:, 3:4]
 
     @property
     def t_matrix(self) -> ndarray:

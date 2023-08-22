@@ -181,7 +181,7 @@ class Gen6DEstimator:
                 position = np.array((result.position[0], result.position[1]), dtype=float) 
                 # 288.31536865234375, 351.4462890625
                 # position = np.array((288, 351), dtype=float)
-                scale_r2q = np.array((result.size/85), dtype=float) 
+                scale_r2q = np.array((result.size/55), dtype=float) 
                 # scale_r2q = detection_outputs['scales'][0]
                 # print(scale_r2q)
 
@@ -198,7 +198,7 @@ class Gen6DEstimator:
             angle_r2q = selection_results['angles'][0]
             scores = selection_results['scores'][0]
 
-            inter_results['sel_angle_r2q'] = angle_r2q
+            inter_results['sel_angle_r2q'] = np.array((0), dtype=float)
             inter_results['sel_scores'] = scores
             inter_results['sel_ref_idx'] = ref_idx
 

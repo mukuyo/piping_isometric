@@ -2,6 +2,36 @@ from PIL import Image, ImageDraw
 from common.pipe import Pipe
 import numpy as np
 import math
+import matplotlib
+matplotlib.use('TkAgg')
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+def are_facing_each_other(R1, t1, R2, t2, R1_name, R2_name, threshold_angle=30):
+    direction1 = R1[:, 0] if R1_name == "bent" else R1[:, -1]
+    direction2 = R2[:, 0] if R2_name == "bent" else R2[:, -1] 
+
+    vector_between_objects = np.subtract(t2, t1).reshape(-1)
+    vector_between_objects /= np.linalg.norm(vector_between_objects)
+    angle1 = np.arccos(np.clip(np.dot(direction1, vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
+    angle2 = np.arccos(np.clip(np.dot(direction2, -vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
+    print(angle1, angle2)
+    return angle1 < threshold_angle and angle2 < threshold_angle
+
+def plot_vectors(R1, t1, R2, t2):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.quiver(t1[0], t1[1], t1[2], R1[0, 2], R1[1, 2], R1[2, 2], length=5.0, color='r', label='Object1 Direction')
+    ax.quiver(t2[0], t2[1], t2[2], R2[0, 2], R2[1, 2], R2[2, 2], length=5.0, color='b', label='Object2 Direction')
+    vector_between_objects = np.subtract(t2, t1).reshape(-1)
+    normalized_vector = vector_between_objects / np.linalg.norm(vector_between_objects)
+    ax.quiver(t1[0], t1[1], t1[2], normalized_vector[0], normalized_vector[1], normalized_vector[2], length=np.linalg.norm(vector_between_objects), color='g', label='Vector between Objects')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.legend()
+    plt.show()
 
 class Isometric:
     def __init__(self, output_path) -> None:
@@ -15,84 +45,24 @@ class Isometric:
         self.__draw.line((point1[0], point1[1], point2[0], point2[1]), fill=(0, 0, 0), width=1) # connect
         
     def run(self, pose_results: list) -> None:
-        for pipe in pose_results:
+        for p, pipe in enumerate(pose_results):
             # print(result.name, result.position, result.size, result.pose)
-            print(pipe.name)
-            for _pipe in pose_results:
+            # print(pipe.name)
+            for i, _pipe in enumerate(pose_results):
                 if pipe.detection_num == _pipe.detection_num:
                     continue
-                
-                # V = _pipe.t_matrix - pipe.t_matrix
-                # V_ = numpy.trace(numpy.dot(pipe.r_matrix.T, _pipe.r_matrix))
-                # angle = numpy.arccos(numpy.clip((V_ - 1.0) / 2.0, -1.0, 1.0))
-                # print(angle * 180/ 3.14)
-                # V_ = numpy.dot(V_, V)
-                # V_ = pipe.r_matrix.T * _pipe.r_matrix * V
-                # print(V_)
-                # print(_pipe.t_matrix)
-                R_A = pipe.r_matrix
-                R_B = _pipe.r_matrix
-                t_A = pipe.t_matrix
-                t_B = _pipe.t_matrix
-                if self.are_objects_facing_each_other2(R_A, t_A, R_B, t_B):
-                    print("r")
-                    break
+
+                R1 = pipe.r_matrix
+                R2 = _pipe.r_matrix
+                t1 = pipe.t_matrix
+                t2 = _pipe.t_matrix
+                result = are_facing_each_other(R1, t1, R2, t2, pipe.name, _pipe.name)
+                print(pipe.position, _pipe.position, result)
+                # print("Objects are facing each other:" if result else "Objects are not facing each other")
+
+                # plot_vectors(R1, t1, R2, t2)
+            # break
+            print()
                 
         print("Complete making piping isometric drawing!!")    
         self.__img.save(self.__output_dir)  
-
-    def compute_angle(self, vec1, vec2):
-        """2つのベクトル間の角度をラジアンで計算する"""
-        dot_product = np.dot(vec1, vec2)
-        magnitude_product = np.linalg.norm(vec1) * np.linalg.norm(vec2)
-        cos_theta = dot_product / magnitude_product
-        angle = np.arccos(np.clip(cos_theta, -1.0, 1.0))
-        return angle
-
-    def are_objects_facing_each_other2(self, R_A, t_A, R_B, t_B, threshold=0.5):
-        """
-        R_A, R_B: 3x3 rotation matrices for object A and B
-        t_A, t_B: 3D translation vectors for object A and B
-        threshold: the threshold for the dot product to determine if the objects are facing each other
-        """
-        # Define a direction vector pointing forward for each object.
-        # Assuming the object's forward direction is along the z-axis.
-        z_axis = np.array([0, 0, 1])
-
-        # Get the actual forward direction in world coordinates for each object.
-        d_A = np.dot(R_A, z_axis)
-        d_B = np.dot(R_B, z_axis)
-
-        # Compute the direction vector from object A to object B.
-        v_AB = t_B - t_A
-
-        # Normalize the vectors for accurate dot product computation
-        v_AB_normalized = v_AB / np.linalg.norm(v_AB)
-        d_B_normalized = d_B / np.linalg.norm(d_B)
-
-        # Compute the dot product between v_AB and d_B.
-        dot = np.dot(v_AB_normalized, d_B_normalized)
-
-        # If dot is negative, then object A is facing object B.
-        print(dot)
-        return dot < -threshold
-    def are_objects_facing_each_other(self, R_A, t_A, R_B, t_B, threshold_angle=np.pi / 4):
-        """2つの物体が向き合っているかを判断する"""
-
-        # 物体の正面方向ベクトルを取得
-        front_vector = np.array([0, 0, 1])
-        front_A = np.dot(R_A, front_vector)
-        front_B = np.dot(R_B, front_vector)
-
-        # 物体間の方向ベクトルを取得
-        direction_A_to_B = t_B - t_A
-        direction_B_to_A = -direction_A_to_B
-
-        # 各物体の正面方向ベクトルと物体間の方向ベクトルの角度を計算
-        angle_A = self.compute_angle(front_A, direction_A_to_B)
-        angle_B = self.compute_angle(front_B, direction_B_to_A)
-        print(angle_A * 180/ 3.14, angle_B * 180/ 3.14)
-        if angle_A < threshold_angle and angle_B < threshold_angle:
-            return True
-        else:
-            return False 
