@@ -1,4 +1,6 @@
 img_path: './data/detect/datasets/pipe/test/images/3.png'
+class_num: 2
+class_name: ['bent', 't-junc']
 
 detect:
   model_path: './data/detect/weights/best.pt'

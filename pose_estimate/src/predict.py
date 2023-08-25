@@ -23,17 +23,18 @@ class Pose:
         self.__output_dir = Path(self.cfg['pose']['output_path'])
         self.__output_dir.mkdir(exist_ok=True, parents=True)
         
-        (self.__output_dir / 'images_raw').mkdir(exist_ok=True, parents=True)
         (self.__output_dir / 'images_out').mkdir(exist_ok=True, parents=True)
         (self.__output_dir / 'images_inter').mkdir(exist_ok=True, parents=True)
 
-        self.estimator_bent = name2estimator[self.cfg['pose']['type']](self.cfg['pose'])
-        self.estimator_t_junc = name2estimator[self.cfg['pose']['type']](self.cfg['pose'])
-        self.estimator_bent.build(parse_database_name("custom/bent"), split_type='all')
-        self.estimator_t_junc.build(parse_database_name("custom/t-junc"), split_type='all')
-
-        self.object_bbox_3d_bent = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name("custom/bent")),0), np.min(get_ref_point_cloud(parse_database_name("custom/bent")),0))
-        self.object_bbox_3d_t_junc = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name("custom/t-junc")),0), np.min(get_ref_point_cloud(parse_database_name("custom/t-junc")),0))
+        self.__estimator = []
+        self.__object_bbox_3d = []
+        
+        for class_name in self.cfg['class_name']:
+            estimator = name2estimator[self.cfg['pose']['type']](self.cfg['pose'])
+            estimator.build(parse_database_name('datasets/'+class_name), split_type='all')
+            object_bbox_3d = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name('datasets/'+class_name)),0), np.min(get_ref_point_cloud(parse_database_name('datasets/'+class_name)),0))
+            self.__estimator.append(estimator)
+            self.__object_bbox_3d.append(object_bbox_3d)
 
     def predict(self, results: Pipe):
         points = []
@@ -43,17 +44,9 @@ class Pose:
             h, w, _ = self.img.shape
             f=np.sqrt(h**2+w**2)
             K = np.asarray([[f,0,w/2],[0,f,h/2],[0,0,1]],np.float32)
-            
-            if result.name == "bent":
-                pose_pr, inter_results = self.estimator_bent.predict(self.img, result, K, pose_init=None)
-                pts, _ = project_points(self.object_bbox_3d_bent, pose_pr, K)
-            else:
-                pose_pr, inter_results = self.estimator_t_junc.predict(self.img, result, K, pose_init=None)
-                pts, _ = project_points(self.object_bbox_3d_t_junc, pose_pr, K)
-            if result.name == "bent":
-                imsave(f'{str(self.__output_dir)}/images_inter/{i}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.estimator_bent.ref_info, self.object_bbox_3d_bent))
-            else:
-                imsave(f'{str(self.__output_dir)}/images_inter/{i}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.estimator_t_junc.ref_info, self.object_bbox_3d_t_junc))
+            pose_pr, inter_results = self.__estimator[result.class_num].predict(self.img, result, K, pose_init=None)
+            pts, _ = project_points(self.__object_bbox_3d[result.class_num], pose_pr, K)
+            imsave(f'{str(self.__output_dir)}/images_inter/{i}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.__estimator[result.class_num].ref_info, self.__object_bbox_3d[result.class_num]))
             rotation = R.from_matrix(pose_pr[:, 0:3])
             roll, pitch, yaw = rotation.as_euler('zyx', degrees=True)
             pose_result = Pipe(class_num=result.class_num, name=result.name, position=result.position, size=result.size, pose=(roll, pitch, yaw), detection_num=i, rt_matrix=pose_pr)

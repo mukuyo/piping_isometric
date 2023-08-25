@@ -296,20 +296,7 @@ class CustomDatabase(BaseDatabase):
         return self.img_ids
 
 def parse_database_name(database_name:str)->BaseDatabase:
-    name2database={
-        'linemod': LINEMODDatabase,
-        'genmop': GenMOPDatabase,
-        'custom': CustomDatabase,
-
-        'co3d_resize': Co3DResizeDatabase,
-        'shapenet': ShapeNetRenderDatabase,
-        'gso': GoogleScannedObjectDatabase,
-    }
-    database_type = database_name.split('/')[0]
-    if database_type in name2database:
-        return name2database[database_type](database_name)
-    else:
-        raise NotImplementedError
+    return CustomDatabase(database_name)
 
 def get_database_split(database, split_name):
     if split_name.startswith('linemod'): # linemod_test or linemod_val
