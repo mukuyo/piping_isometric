@@ -1,0 +1,24 @@
+img_path: './data/detect/datasets/pipe/test/images/3.png'
+
+detect:
+  model_path: './data/detect/weights/best.pt'
+  conf_val: 0.65
+  output_path: './data/detect/result/'
+
+pose:
+  name: gen6d_pretrain
+  type: gen6d
+
+  output_path: './data/pose/result/'
+
+  detector: pose_estimate/configs/detector/detector_pretrain.yaml
+  selector: pose_estimate/configs/selector/selector_pretrain.yaml
+  refiner:  pose_estimate/configs/refiner/refiner_pretrain.yaml
+
+  ref_resolution: 128   
+  ref_view_num: 64      
+  det_ref_view_num: 32 
+  refine_iter: 3       
+
+isometric:
+  output_path: './data/isometric/result/result.jpg'

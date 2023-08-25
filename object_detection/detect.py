@@ -1,15 +1,17 @@
 from ultralytics import YOLO
 from common.pipe import Pipe 
+import yaml
 
 class Detect():
-    def __init__(self, model_path):
-        self.__yolo_model = YOLO(model=model_path, task='detect')
+    def __init__(self, conf):
+        self.cfg = conf
+        self.__yolo_model = YOLO(model=self.cfg['detect']['model_path'], task='detect')
 
-    def run_detect(self, img_path) -> list:
+    def run_detect(self) -> list:
         pred = self.__yolo_model.predict(
-            source=img_path,
+            source=self.cfg['img_path'],
             save=True,
-            conf=0.65,
+            conf=self.cfg['detect']['conf_val'],
         )
 
         detection_results = []
