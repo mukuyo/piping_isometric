@@ -1,6 +1,6 @@
 from object_detection.detect import Detect
 from pose_estimate.src.predict import Pose
-from draw_isometric.isometric import Isometric
+from isometric.iso import Iso
 import yaml
 
 class Main:
@@ -8,7 +8,7 @@ class Main:
         self.cfg = cfg
         self.detect = Detect(self.cfg)
         self.pose = Pose(self.cfg)
-        self.isometric = Isometric(self.cfg)
+        self.isometric = Iso(self.cfg)
 
     def run(self):
         detection_results = self.detect.run_detect()

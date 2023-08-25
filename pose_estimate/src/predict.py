@@ -5,7 +5,6 @@ from pathlib import Path
 
 import numpy as np
 from skimage.io import imsave, imread
-from tqdm import tqdm
 
 from pose_estimate.dataset.database import parse_database_name, get_ref_point_cloud
 from pose_estimate.src.estimator import name2estimator

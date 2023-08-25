@@ -6,7 +6,6 @@ import matplotlib
 matplotlib.use('TkAgg')
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 def isometric_transform(points):
     transform_matrix = np.array([
@@ -28,7 +27,7 @@ def are_facing_each_other(R1, t1, R2, t2, R1_name, R2_name, threshold_angle=30):
         return line
     return None
 
-class Isometric:
+class Iso:
     def __init__(self, cfg) -> None:
         self.cfg = cfg
 
