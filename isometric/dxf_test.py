@@ -6,4 +6,4 @@ msp = doc.modelspace()
 #モデルスペースに線を挿入
 msp.add_line((0, 0), (10, 0))
 #dxfを現在のディレクトリに保存
-doc.saveas('図面1.dxf')
+doc.saveas('./data/isometric/results/test.dxf')
