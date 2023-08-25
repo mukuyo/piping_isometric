@@ -4,7 +4,7 @@ from draw_isometric.isometric import Isometric
 from common.pipe import Pipe
 
 model_path = './data/detect/weights/best.pt'
-img_path = './data/detect/datasets/pipe/test/images/1.png'
+img_path = './data/detect/datasets/pipe/test/images/3.png'
 output_path = './data/isometric/result/result.jpg'
 
 class Main:

@@ -288,8 +288,8 @@ class CustomDatabase(BaseDatabase):
         return self.Ks[img_id].copy()
 
     def get_pose(self, img_id):
-        if img_id == "139":
-            img_id = "138"
+        # if img_id == "139":
+        #     img_id = "138"
         return self.poses[img_id].copy()
 
     def get_img_ids(self):

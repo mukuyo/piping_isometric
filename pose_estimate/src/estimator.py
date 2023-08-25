@@ -181,7 +181,7 @@ class Gen6DEstimator:
                 position = np.array((result.position[0], result.position[1]), dtype=float) 
                 # 288.31536865234375, 351.4462890625
                 # position = np.array((288, 351), dtype=float)
-                scale_r2q = np.array((result.size/55), dtype=float) 
+                scale_r2q = np.array((result.size/75), dtype=float) 
                 # scale_r2q = detection_outputs['scales'][0]
                 # print(scale_r2q)
 
@@ -195,10 +195,11 @@ class Gen6DEstimator:
                 selection_results = self.selector.select_que_imgs(que_img_[None])
 
             ref_idx = selection_results['ref_idx'][0]
-            angle_r2q = selection_results['angles'][0]
+            # angle_r2q = selection_results['angles'][0]
+            angle_r2q = 0
             scores = selection_results['scores'][0]
 
-            inter_results['sel_angle_r2q'] = np.array((0), dtype=float)
+            inter_results['sel_angle_r2q'] = angle_r2q
             inter_results['sel_scores'] = scores
             inter_results['sel_ref_idx'] = ref_idx
 
@@ -213,7 +214,7 @@ class Gen6DEstimator:
         # stage 4: refine pose
         if self.refiner is not None:
             refine_poses = [pose_pr]
-            for k in range(self.cfg['refine_iter']):
+            for k in range(4):
                 pose_pr = self.refiner.refine_que_imgs(que_img, que_K, pose_pr, size=128, ref_num=5, ref_even=True)
                 refine_poses.append(pose_pr)
             inter_results['refine_poses'] = refine_poses

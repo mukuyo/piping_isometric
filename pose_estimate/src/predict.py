@@ -78,9 +78,9 @@ class Pose:
             # bbox_img = draw_bbox_3d(img, pts, (0,0,255))
             # imsave(f'{str(self.__output_dir)}/images_out/{self.__que_id}-bbox.jpg', bbox_img)
             if result.name == "bent":
-                imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.estimator_bent.ref_info, self.object_bbox_3d_bent))
-            else:
-                imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.estimator_t_junc.ref_info, self.object_bbox_3d_t_junc))
+                imsave(f'{str(self.__output_dir)}/images_inter/{i}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.estimator_bent.ref_info, self.object_bbox_3d_bent))
+            # else:
+                # imsave(f'{str(self.__output_dir)}/images_inter/{self.__que_id}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.estimator_t_junc.ref_info, self.object_bbox_3d_t_junc))
             # self.__hist_pts.append(pts)
             # pts_ = weighted_pts(self.__hist_pts, weight_num=self.__args.num, std_inv=self.__args.std)
             # pose_ = pnp(self.__object_bbox_3d[result.class_num], pts_, K)
