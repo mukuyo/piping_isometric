@@ -41,7 +41,12 @@ class Utils:
                 return line
             elif results[0][2] == 'forward':
                 line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0)
-                return line       
+                return line
+        else:
+            _a = pose_results[results[0][0]].r_matrix[1][1] / pose_results[results[0][0]].r_matrix[0][1]
+            _b = pose_results[results[0][0]].position[1] - _a * pose_results[results[0][0]].position[0]
+            line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, _b)
+            return line
                 
     def _decide_coordinates(self, results, pose_results):
         line = [(pose_results[result[0]].position, pose_results[result[1]].position) for result in results]
