@@ -5,7 +5,7 @@ class Utils:
     """Isometric Utils"""
     def __init__(self) -> None:
         self.__detect_info: list = []
-    
+
     def _isometric_transform(self, points):
         """isometric transform"""
         transform_matrix = np.array([
@@ -13,22 +13,30 @@ class Utils:
             [np.sqrt(2)/2, np.sqrt(2)/2, -np.sqrt(2)]
         ]) * np.sqrt(1/3)
         return np.dot(points, transform_matrix.T)
+    
+    def line_detect(self, pose_results):
+        """line_detect"""
+        pare_results = self._facing_each_other(pose_results)
+        results, all_results = self._remain_pipes(pare_results, pose_results)
+        all_results = self._sort_results(all_results)
+        return results
 
     def _find_connet_pipe(self, pipe_info, all_results, isometric_line):
         _pipe_info = []
         if pipe_info:
             for info in pipe_info:
                 if info[4] == 'bent':
-                    connect_num = 1
-                elif info[4] == 'junction':
                     connect_num = 2
+                elif info[4] == 'junction':
+                    connect_num = 3
                 else:
                     connect_num = 0
                 for _ in range(connect_num):
                     same_pipe = next((t for t in all_results if t[0][0] == info[1][0]), None)
                     all_results = [t for t in all_results if t != same_pipe]
-                    isometric_line.append(same_pipe)
-                    _pipe_info.append(same_pipe)
+                    if not (same_pipe[0] == info[1] and same_pipe[1] == info[0]):
+                        isometric_line.append(same_pipe)
+                        _pipe_info.append(same_pipe)
         return _pipe_info, all_results
 
     def _sort_results(self, all_results):
@@ -41,22 +49,18 @@ class Utils:
             isometric_line.append(largest_tuple)
             if i == 1 and largest_tuple[3] == 'bent':
                 break
+        # for _ in range(6):
         while all_results:
-            print(isometric_line)
             pipe_info, all_results = self._find_connet_pipe(pipe_info, all_results, isometric_line)
+            # print(all_results)
             # print(all_results)
             
             # print()
 
-        # for i in isometric_line:
-            # print(i)
+        for i in isometric_line:
+            print(i)
 
-    def line_detect(self, pose_results):
-        """line_detect"""
-        pare_results = self._facing_each_other(pose_results)
-        results, all_results = self._remain_pipe(pare_results, pose_results)
-        all_results = self._sort_results(all_results)
-        return results
+
     
     def _remain_direction(self, results, pose_results, word):
         if 'downward' == word:
@@ -90,15 +94,15 @@ class Utils:
             word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b)), word, pose_results[results[0][0]].name, 'None'
             return line, word_line
     
-    def _remain_pipe(self, pare_resutls, pose_results):
+    def _remain_pipes(self, pare_resutls, pose_results):
         """remain pipe"""
         line_detects = []
         all_results = []
         for results in pare_resutls:
             for result in results:
+                all_results.append((pose_results[result[0]].position, pose_results[result[1]].position, result[2], pose_results[result[0]].name, pose_results[result[1]].name))
                 if (pose_results[result[1]].position, pose_results[result[0]].position) not in line_detects:
                     line_detects.append((pose_results[result[0]].position, pose_results[result[1]].position))
-                    all_results.append((pose_results[result[0]].position, pose_results[result[1]].position, result[2], pose_results[result[0]].name, pose_results[result[1]].name))
             if len(results) != pose_results[results[0][0]].pare_num:
                 keywords = ['forward', 'downward'] if pose_results[results[0][0]].name == 'bent' else ['forward', 'downward', 'upward']
                 detectwords = [result[2] for result in results]
