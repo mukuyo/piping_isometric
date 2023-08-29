@@ -14,22 +14,42 @@ class Utils:
         ]) * np.sqrt(1/3)
         return np.dot(points, transform_matrix.T)
 
+    def _find_connet_pipe(self, pipe_info, all_results, isometric_line):
+        _pipe_info = []
+        if pipe_info:
+            for info in pipe_info:
+                if info[4] == 'bent':
+                    connect_num = 1
+                elif info[4] == 'junction':
+                    connect_num = 2
+                else:
+                    connect_num = 0
+                for _ in range(connect_num):
+                    same_pipe = next((t for t in all_results if t[0][0] == info[1][0]), None)
+                    all_results = [t for t in all_results if t != same_pipe]
+                    isometric_line.append(same_pipe)
+                    _pipe_info.append(same_pipe)
+        return _pipe_info, all_results
+
     def _sort_results(self, all_results):
         isometric_line = []
-        largest_tuple = max(all_results, key=lambda x: x[0])
-        isometric_line.append(largest_tuple)
-        for results in all_results:
-            if results[0][0] == largest_tuple[0][0] and results[1][0] != largest_tuple[1][0]:
-                isometric_line.append(results)
-        for info in isometric_line:
-            if info[4] == 'bent':
-                connect_num = 2
-            elif info[4] == 'junction':
-                connect_num = 3
-            else:
-                connect_num = 0
-            for _ in range(connect_num):
-                print(isometric_line)
+        pipe_info = []
+        for i in range(3):
+            largest_tuple = max(all_results, key=lambda x: x[0])
+            all_results = [t for t in all_results if t != largest_tuple]
+            pipe_info.append(largest_tuple)
+            isometric_line.append(largest_tuple)
+            if i == 1 and largest_tuple[3] == 'bent':
+                break
+        while all_results:
+            print(isometric_line)
+            pipe_info, all_results = self._find_connet_pipe(pipe_info, all_results, isometric_line)
+            # print(all_results)
+            
+            # print()
+
+        # for i in isometric_line:
+            # print(i)
 
     def line_detect(self, pose_results):
         """line_detect"""
