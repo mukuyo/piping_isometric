@@ -26,7 +26,7 @@ class Detect():
                     name = "bent"
                 else:
                     name = "junction"
-                pipe = Pipe(class_num, name, position, size)
+                pipe = Pipe(name, position, size)
                 detection_results.append(pipe)
         
         return detection_results

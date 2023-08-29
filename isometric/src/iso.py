@@ -1,16 +1,16 @@
 """This is a generate isomeric program"""
-from common.pipe import Pipe
-from isometric.src.tool import are_facing_each_other
 from isometric.opencv.draw import Draw
+from isometric.src.tool import Utils
 
-class Iso:
+class Iso(Utils):
     """Isometric class"""
     def __init__(self, cfg) -> None:
+        super().__init__()
         self.cfg = cfg
-        # self.__draw = Draw()
+        self.__draw = Draw()
 
     def generate_iso(self, pose_results: list) -> None:
         """generate_isometric"""
-        pare_info = are_facing_each_other(pose_results)
-        print(pare_info)
-        print("Complete making piping isometric drawing!!") 
+        pare_info = self.line_detect(pose_results)
+        self.__draw.line_2d(pare_info, pose_results)
+        print("Complete making piping isometric drawing!!")

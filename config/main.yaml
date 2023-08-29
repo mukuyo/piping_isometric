@@ -1,4 +1,4 @@
-img_path: './data/detect/datasets/pipe/test/images/1000.png'
+img_path: './data/detect/datasets/pipe/test/images/3.png'
 class_num: 2
 class_name: ['bent', 't-junc']
 generate_type: 'opencv'

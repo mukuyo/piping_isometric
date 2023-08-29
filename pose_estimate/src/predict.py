@@ -48,7 +48,7 @@ class Pose:
             imsave(f'{str(self.__output_dir)}/images_inter/{i}.jpg', visualize_intermediate_results(self.img, K, inter_results, self.__estimator[result.class_num].ref_info, self.__object_bbox_3d[result.class_num]))
             rotation = R.from_matrix(pose_pr[:, 0:3])
             roll, pitch, yaw = rotation.as_euler('zyx', degrees=True)
-            pose_result = Pipe(class_num=result.class_num, name=result.name, position=result.position, size=result.size, pose=(roll, pitch, yaw), detection_num=i, rt_matrix=pose_pr)
+            pose_result = Pipe(name=result.name, position=result.position, size=result.size, pose=(roll, pitch, yaw), detection_num=i, rt_matrix=pose_pr)
             pose_results.append(pose_result)
             points.append(pts)
 
