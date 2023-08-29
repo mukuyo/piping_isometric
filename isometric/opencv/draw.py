@@ -21,14 +21,11 @@ class Draw:
 
     def line_2d(self, results, pose_results) -> None:
         """line_2d"""
-        # for result in results:
-        #     for i in range(len(result)):
-        #         if result[i] is not None:
-        #             self.draw_straight(result[i][0], result[i][1])
+        for result in results:
+            self.draw_straight(result[0], result[1])
         self.__img.save('./data/isometric/results/2d_result.jpg')
     
     def isometric(self, results, pose_results) -> None:
         """isometirc drawing"""
-        print("gg")
-        print(results)
+        # print(results)
         self.__img.save('./data/isometric/results/iso_result.jpg')
