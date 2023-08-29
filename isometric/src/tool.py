@@ -5,13 +5,6 @@ class Utils:
     """Isometric Utils"""
     def __init__(self) -> None:
         self.__detect_info: list = []
-
-    def is_subtuple(self, sub, main):
-        sub_len = len(sub)
-        for i in range(len(main) - sub_len + 1):
-            if main[i:i+sub_len] == sub:
-                return True
-        return False
     
     def _isometric_transform(self, points):
         """isometric transform"""
@@ -22,8 +15,21 @@ class Utils:
         return np.dot(points, transform_matrix.T)
 
     def _sort_results(self, all_results):
+        isometric_line = []
         largest_tuple = max(all_results, key=lambda x: x[0])
-        print(largest_tuple)
+        isometric_line.append(largest_tuple)
+        for results in all_results:
+            if results[0][0] == largest_tuple[0][0] and results[1][0] != largest_tuple[1][0]:
+                isometric_line.append(results)
+        for info in isometric_line:
+            if info[4] == 'bent':
+                connect_num = 2
+            elif info[4] == 'junction':
+                connect_num = 3
+            else:
+                connect_num = 0
+            for _ in range(connect_num):
+                print(isometric_line)
 
     def line_detect(self, pose_results):
         """line_detect"""
@@ -39,11 +45,11 @@ class Utils:
                 _a = (pose_results[results[up_num][0]].position[1] - pose_results[results[up_num][1]].position[1]) / (pose_results[results[up_num][0]].position[0] - pose_results[results[up_num][1]].position[0])
                 _b = pose_results[results[up_num][0]].position[1] - _a * pose_results[results[up_num][0]].position[0]
                 line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((480 - _b) / _a), 480)
-                word_line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((480 - _b) / _a), 480), word, pose_results[results[up_num][0]].name
+                word_line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((480 - _b) / _a), 480), word, pose_results[results[up_num][0]].name, 'None'
                 return line, word_line
             elif results[0][2] == 'forward':
                 line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 480)
-                word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 480), word, pose_results[results[0][0]].name
+                word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 480), word, pose_results[results[0][0]].name, 'None'
                 return line, word_line
         elif 'upward' == word:
             up_num = next((i for i, result in enumerate(results) if 'downward' in result[2]), None)
@@ -51,17 +57,17 @@ class Utils:
                 _a = (pose_results[results[up_num][0]].position[1] - pose_results[results[up_num][1]].position[1]) / (pose_results[results[up_num][0]].position[0] - pose_results[results[up_num][1]].position[0])
                 _b = pose_results[results[up_num][0]].position[1] - _a * pose_results[results[up_num][0]].position[0]
                 line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((0 - _b) / _a), 0)
-                word_line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((0 - _b) / _a), 0), word, pose_results[results[up_num][0]].name
+                word_line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((0 - _b) / _a), 0), word, pose_results[results[up_num][0]].name, 'None'
                 return line, word_line
             elif results[0][2] == 'forward':
                 line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0)
-                word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0), word, pose_results[results[0][0]].name
+                word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0), word, pose_results[results[0][0]].name, 'None'
                 return line, word_line
         else:
             _a = pose_results[results[0][0]].r_matrix[1][1] / pose_results[results[0][0]].r_matrix[0][1]
             _b = pose_results[results[0][0]].position[1] - _a * pose_results[results[0][0]].position[0]
             line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b))
-            word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b)), word, pose_results[results[0][0]].name
+            word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b)), word, pose_results[results[0][0]].name, 'None'
             return line, word_line
     
     def _remain_pipe(self, pare_resutls, pose_results):
