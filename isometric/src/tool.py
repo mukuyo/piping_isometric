@@ -45,32 +45,31 @@ class Utils:
         else:
             _a = pose_results[results[0][0]].r_matrix[1][1] / pose_results[results[0][0]].r_matrix[0][1]
             _b = pose_results[results[0][0]].position[1] - _a * pose_results[results[0][0]].position[0]
-            line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, _b)
+            line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b))
             return line
                 
-    def _decide_coordinates(self, results, pose_results):
-        line = [(pose_results[result[0]].position, pose_results[result[1]].position) for result in results]
+    def _decide_coordinates(self, results, pose_results, line_detects):
+        for result in results:
+            if (pose_results[result[1]].position, pose_results[result[0]].position) not in line_detects:
+                line_detects.append((pose_results[result[0]].position, pose_results[result[1]].position))
         if len(results) == pose_results[results[0][0]].pare_num:
-            return line
+            return line_detects
         else:
             keywords = ['forward', 'downward'] if pose_results[results[0][0]].name == 'bent' else ['forward', 'downward', 'upward']
             detectwords = [result[2] for result in results]
             keywords = [k for k in keywords if k not in detectwords]
-            # print(results[0][0], keywords)
             for word in keywords:
-                line.append(self._remain_coordinates(results, pose_results, word))
-        print(line)
-        return line
+                line = self._remain_coordinates(results, pose_results, word)
+                if line[::-1] not in line_detects:
+                    line_detects.append(line)
+        return line_detects
     
     def _remain_pipe(self, pare_resutls, pose_results):
         """remain pipe"""
         line_detects = []
         for results in pare_resutls:
-            line_detects.append(self._decide_coordinates(results, pose_results))
+            line_detects = self._decide_coordinates(results, pose_results, line_detects)
         return line_detects
-
-
-        
 
     def _facing_each_other(self, pose_results, threshold_angle=35) -> list:
         """find facing pipe"""

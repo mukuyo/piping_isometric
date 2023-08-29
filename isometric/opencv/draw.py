@@ -21,15 +21,14 @@ class Draw:
 
     def line_2d(self, results, pose_results) -> None:
         """line_2d"""
-        for result in results:
-            for i in range(len(result)):
-                if result[i] is not None:
-                    self.draw_straight(result[i][0], result[i][1])
-            # if p2_num >= 0:
-                # self.draw_straight(pose_results[p1_num].position, pose_results[p2_num].position)
-            # elif p2_num == -1:
-            #     self.draw_upward(pose_results[p1_num].position)
-            # else:
-            #     self.draw_downward(pose_results[p1_num].position)
-            
-        self.__img.save('./data/isometric/results/result.jpg')
+        # for result in results:
+        #     for i in range(len(result)):
+        #         if result[i] is not None:
+        #             self.draw_straight(result[i][0], result[i][1])
+        self.__img.save('./data/isometric/results/2d_result.jpg')
+    
+    def isometric(self, results, pose_results) -> None:
+        """isometirc drawing"""
+        print("gg")
+        print(results)
+        self.__img.save('./data/isometric/results/iso_result.jpg')
