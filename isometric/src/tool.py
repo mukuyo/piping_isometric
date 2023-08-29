@@ -1,10 +1,9 @@
 import numpy as np
-from common.link import Link
 
 class Utils:
     """Isometric Utils"""
     def __init__(self) -> None:
-        self.__detect_info: list = []
+        pass
 
     def _isometric_transform(self, points):
         """isometric transform"""
@@ -18,8 +17,8 @@ class Utils:
         """line_detect"""
         pare_results = self._facing_each_other(pose_results)
         results, all_results = self._remain_pipes(pare_results, pose_results)
-        all_results = self._sort_results(all_results)
-        return results
+        isometric_results = self._sort_results(all_results)
+        return results, isometric_results
 
     def _find_connet_pipe(self, pipe_info, all_results, isometric_line):
         _pipe_info = []
@@ -37,7 +36,7 @@ class Utils:
                     if not (same_pipe[0] == info[1] and same_pipe[1] == info[0]):
                         isometric_line.append(same_pipe)
                         _pipe_info.append(same_pipe)
-        return _pipe_info, all_results
+        return _pipe_info, all_results, isometric_line
 
     def _sort_results(self, all_results):
         isometric_line = []
@@ -49,19 +48,11 @@ class Utils:
             isometric_line.append(largest_tuple)
             if i == 1 and largest_tuple[3] == 'bent':
                 break
-        # for _ in range(6):
         while all_results:
-            pipe_info, all_results = self._find_connet_pipe(pipe_info, all_results, isometric_line)
-            # print(all_results)
-            # print(all_results)
-            
-            # print()
+            pipe_info, all_results, isometric_line = self._find_connet_pipe(pipe_info, all_results, isometric_line)
 
-        for i in isometric_line:
-            print(i)
+        return isometric_line
 
-
-    
     def _remain_direction(self, results, pose_results, word):
         if 'downward' == word:
             up_num = next((i for i, result in enumerate(results) if 'upward' in result[2]), None)
