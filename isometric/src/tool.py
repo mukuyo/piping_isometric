@@ -1,70 +1,60 @@
 import numpy as np
+from common.connect import ConnectInfo
 
 class Utils:
     """Isometric Utils"""
     def __init__(self) -> None:
         pass
 
-    def _isometric_transform(self, points):
+    def isometric_transform(self, points):
         """isometric transform"""
         transform_matrix = np.array([
             [1, -1, 0],
             [np.sqrt(2)/2, np.sqrt(2)/2, -np.sqrt(2)]
         ]) * np.sqrt(1/3)
         return np.dot(points, transform_matrix.T)
-    
-    def line_detect(self, pose_results):
-        """line_detect"""
-        pare_results = self._facing_each_other(pose_results)
-        results, all_results = self._remain_pipes(pare_results, pose_results)
-        isometric_results = self._sort_results(all_results)
-        return results, isometric_results
 
-    def _find_connet_pipe(self, pipe_info, all_results, isometric_line):
+    def find_connet_pipe(self, pipe_info, all_results, isometric_line):
+        """find connect pipe"""
         _pipe_info = []
-        if pipe_info:
-            for info in pipe_info:
-                if info[4] == 'bent':
-                    connect_num = 2
-                elif info[4] == 'junction':
-                    connect_num = 3
-                else:
-                    connect_num = 0
-                for _ in range(connect_num):
-                    same_pipe = next((t for t in all_results if t[0][0] == info[1][0]), None)
-                    all_results = [t for t in all_results if t != same_pipe]
-                    if not (same_pipe[0] == info[1] and same_pipe[1] == info[0]):
-                        isometric_line.append(same_pipe)
-                        _pipe_info.append(same_pipe)
+        for info in pipe_info:
+            for _ in range(info.connect_num):
+                same_pipe = next((t for t in all_results if t.position1[0] == info.position2[0]), None)
+                all_results = [t for t in all_results if t != same_pipe]
+                if not (same_pipe.position1 == info.position2 and same_pipe.position2 == info.position1):
+                    isometric_line.append(same_pipe)
+                    _pipe_info.append(same_pipe)
         return _pipe_info, all_results, isometric_line
 
-    def _sort_results(self, all_results):
+    def sort_results(self, all_results):
+        """sort results"""
         isometric_line = []
         pipe_info = []
         for i in range(3):
-            largest_tuple = max(all_results, key=lambda x: x[0])
+            largest_tuple = max(all_results, key=lambda x: x.position1[0])
             all_results = [t for t in all_results if t != largest_tuple]
             pipe_info.append(largest_tuple)
             isometric_line.append(largest_tuple)
-            if i == 1 and largest_tuple[3] == 'bent':
+            if i == 1 and largest_tuple.name1 == 'bent':
                 break
         while all_results:
-            pipe_info, all_results, isometric_line = self._find_connet_pipe(pipe_info, all_results, isometric_line)
+            pipe_info, all_results, isometric_line = self.find_connet_pipe(pipe_info, all_results, isometric_line)
 
         return isometric_line
 
-    def _remain_direction(self, results, pose_results, word):
+    def remain_direction(self, results, pose_results, word):
+        """remain direction"""
         if 'downward' == word:
             up_num = next((i for i, result in enumerate(results) if 'upward' in result[2]), None)
             if up_num is not None:
                 _a = (pose_results[results[up_num][0]].position[1] - pose_results[results[up_num][1]].position[1]) / (pose_results[results[up_num][0]].position[0] - pose_results[results[up_num][1]].position[0])
                 _b = pose_results[results[up_num][0]].position[1] - _a * pose_results[results[up_num][0]].position[0]
                 line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((480 - _b) / _a), 480)
-                word_line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((480 - _b) / _a), 480), word, pose_results[results[up_num][0]].name, 'None'
+                word_line = ConnectInfo((pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((480 - _b) / _a), 480), word, pose_results[results[up_num][0]].name, 'None')
                 return line, word_line
             elif results[0][2] == 'forward':
                 line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 480)
-                word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 480), word, pose_results[results[0][0]].name, 'None'
+                word_line = ConnectInfo((pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 480), word, pose_results[results[0][0]].name, 'None')
                 return line, word_line
         elif 'upward' == word:
             up_num = next((i for i, result in enumerate(results) if 'downward' in result[2]), None)
@@ -72,26 +62,26 @@ class Utils:
                 _a = (pose_results[results[up_num][0]].position[1] - pose_results[results[up_num][1]].position[1]) / (pose_results[results[up_num][0]].position[0] - pose_results[results[up_num][1]].position[0])
                 _b = pose_results[results[up_num][0]].position[1] - _a * pose_results[results[up_num][0]].position[0]
                 line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((0 - _b) / _a), 0)
-                word_line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((0 - _b) / _a), 0), word, pose_results[results[up_num][0]].name, 'None'
+                word_line = ConnectInfo((pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((0 - _b) / _a), 0), word, pose_results[results[up_num][0]].name, 'None')
                 return line, word_line
             elif results[0][2] == 'forward':
                 line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0)
-                word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0), word, pose_results[results[0][0]].name, 'None'
+                word_line = ConnectInfo((pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0), word, pose_results[results[0][0]].name, 'None')
                 return line, word_line
         else:
             _a = pose_results[results[0][0]].r_matrix[1][1] / pose_results[results[0][0]].r_matrix[0][1]
             _b = pose_results[results[0][0]].position[1] - _a * pose_results[results[0][0]].position[0]
             line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b))
-            word_line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b)), word, pose_results[results[0][0]].name, 'None'
+            word_line = ConnectInfo((pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b)), word, pose_results[results[0][0]].name, 'None')
             return line, word_line
     
-    def _remain_pipes(self, pare_resutls, pose_results):
+    def remain_pipes(self, pare_resutls, pose_results):
         """remain pipe"""
         line_detects = []
         all_results = []
         for results in pare_resutls:
             for result in results:
-                all_results.append((pose_results[result[0]].position, pose_results[result[1]].position, result[2], pose_results[result[0]].name, pose_results[result[1]].name))
+                all_results.append(ConnectInfo(pose_results[result[0]].position, pose_results[result[1]].position, result[2], pose_results[result[0]].name, pose_results[result[1]].name))
                 if (pose_results[result[1]].position, pose_results[result[0]].position) not in line_detects:
                     line_detects.append((pose_results[result[0]].position, pose_results[result[1]].position))
             if len(results) != pose_results[results[0][0]].pare_num:
@@ -99,13 +89,13 @@ class Utils:
                 detectwords = [result[2] for result in results]
                 keywords = [k for k in keywords if k not in detectwords]
                 for word in keywords:
-                    line, word_line = self._remain_direction(results, pose_results, word)
+                    line, word_line = self.remain_direction(results, pose_results, word)
                     all_results.append(word_line)
                     if line[::-1] not in line_detects:
                         line_detects.append(line)
         return line_detects, all_results
 
-    def _facing_each_other(self, pose_results, threshold_angle=35) -> list:
+    def facing_each_other(self, pose_results, threshold_angle=35) -> list:
         """find facing pipe"""
         pare_results = [[] for _ in range(len(pose_results))]
         except_judge = []

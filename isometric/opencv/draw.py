@@ -43,21 +43,21 @@ class Draw:
     
     def isometric(self, results) -> None:
         """isometirc drawing"""
-        position = [results[0][0][0], results[0][0][1]]
+        position = results[0].position1
         pre_position = [0, 0]
         for result in results:
-            if result[2] == 'forward':
-                if result[4] != 'None':
+            if result.relationship == 'forward':
+                if result.name2 != 'None':
                     position, pre_position = self._draw_iso_forward(position)
                 else:
                     self._draw_iso_forward_only(pre_position)
-            elif result[2] == 'downward':
-                if result[4] != 'None':
+            elif result.relationship == 'downward':
+                if result.name2 != 'None':
                     position[1], pre_position = self._draw_iso_downward(position)
                 else:
                     self._draw_iso_downward_only(pre_position)
-            elif result[2] == 'upward':
-                if result[4] != 'None':
+            elif result.relationship == 'upward':
+                if result.name2 != 'None':
                     position[1], pre_position = self._draw_iso_upward(position)
                 else:
                     self._draw_iso_upward_only(pre_position)
