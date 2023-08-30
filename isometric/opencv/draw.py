@@ -15,19 +15,19 @@ class Draw:
 
     def _draw_iso_forward(self, point):
         self.__iso.line((point[0], point[1], -150*cos(pi/6) + point[0], -150* sin(pi/6) + point[1]), fill=(0, 0, 0), width=1)
-        return [int(-150*cos(pi/6) + point[0]), int(-150* sin(pi/6) + point[1])]
+        return [int(-150*cos(pi/6) + point[0]), int(-150* sin(pi/6) + point[1])], point
 
     def _draw_iso_forward_only(self, point) -> None:
         self.__iso.line((point[0], point[1], -150*cos(pi/6) + point[0], -150* sin(pi/6) + point[1]), fill=(0, 0, 0), width=1)
     
     def _draw_iso_downward(self, point) -> int:
-        self.__iso.line((point[0], point[1], point[0], point[1] - 150), fill=(0, 0, 0), width=1)
-        return point[1] - 150
+        self.__iso.line((point[0], point[1], point[0], point[1] + 150), fill=(0, 0, 0), width=1)
+        return point[1] + 150, point
 
     def _draw_iso_upward(self, point) -> int:
-        self.__iso.line((point[0], point[1], point[0], point[1] + 150), fill=(0, 0, 0), width=1)
-        return point[1] + 150
-
+        self.__iso.line((point[0], point[1], point[0], point[1] - 150), fill=(0, 0, 0), width=1)
+        return point[1] - 150, point
+    
     def _draw_iso_downward_only(self, point) -> None:
         self.__iso.line((point[0], point[1], point[0], 480), fill=(0, 0, 0), width=1)
 
@@ -48,23 +48,31 @@ class Draw:
         if results[0][3] == 'junction':
             num = 3
         # for i in range(num):
+        pre_word = 'None'
         position = [results[0][0][0], results[0][0][1]]
-        for i, result in enumerate(results):
+        pre_position = [0, 0]
+        for i, result in enumerate(results): 
             if result[2] == 'forward':
-                if result[3] != 'None':
-                    position = self._draw_iso_forward(position)
+                if result[4] != 'None':
+                    position, pre_position = self._draw_iso_forward(position)
                 else:
-                    self._draw_iso_forward_only(position)
+                    self._draw_iso_forward_only(pre_position)
             elif result[2] == 'downward':
-                if result[3] != 'None':
-                    position[1] = self._draw_iso_downward(position)
+                if result[4] != 'None':
+                    position[1], pre_position = self._draw_iso_downward(position)
                 else:
-                    self._draw_iso_downward_only(position)
+                    print(pre_position)
+                    self._draw_iso_downward_only(pre_position)
             elif result[2] == 'upward':
-                if result[3] != 'None':
-                    position[1] = self._draw_iso_upward(position)
+                if result[4] != 'None':
+                    position[1], pre_position = self._draw_iso_upward(position)
                 else:
-                    self._draw_iso_upward_only(position)
-            if i < num:
-                position = [result[0][0], result[0][1]]
+                    self._draw_iso_upward_only(pre_position)
+
+            # if i < num:
+                # position = [result[0][0], result[0][1]]
+            print(result, position)
+            pre_word = result[2]
+            if i == 8:
+                break
         self.__img_iso.save('./data/isometric/results/iso_result.jpg')
