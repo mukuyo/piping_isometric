@@ -5,6 +5,7 @@ class Utils:
     """Isometric Utils"""
     def __init__(self, cfg) -> None:
         self.cfg = cfg
+        self.__isometric_results = []
 
     def isometric_transform(self, points):
         """isometric transform"""
@@ -45,55 +46,51 @@ class Utils:
     def remain_direction(self, results, pose_results, word):
         """remain direction"""
         if 'downward' == word:
-            up_num = next((i for i, result in enumerate(results) if 'upward' in result[2]), None)
+            up_num = next((i for i, result in enumerate(results) if 'upward' in result.relationship), None)
             if up_num is not None:
-                _a = (pose_results[results[up_num][0]].position[1] - pose_results[results[up_num][1]].position[1]) / (pose_results[results[up_num][0]].position[0] - pose_results[results[up_num][1]].position[0])
-                _b = pose_results[results[up_num][0]].position[1] - _a * pose_results[results[up_num][0]].position[0]
-                line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((480 - _b) / _a), 480)
-                word_line = ConnectInfo((pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((480 - _b) / _a), 480), word, pose_results[results[up_num][0]].name, 'None')
-                return line, word_line
-            elif results[0][2] == 'forward':
-                line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 480)
-                word_line = ConnectInfo((pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 480), word, pose_results[results[0][0]].name, 'None')
-                return line, word_line
+                _a = (results[up_num].position1[1] - results[up_num].position2[1]) / (results[up_num].position1[0] - results[up_num].position2[0])
+                _b = results[up_num].position1[1] - _a * results[up_num].position1[0]
+                line = ConnectInfo(results[up_num].position1, (int((480 - _b) / _a), 480), word, results[up_num].name1, 'None')
+            elif results[0].relationship == 'forward':
+                line = ConnectInfo(results[0].position1, (results[0].position1[0], 480), word, results[0].name1, 'None')
         elif 'upward' == word:
-            up_num = next((i for i, result in enumerate(results) if 'downward' in result[2]), None)
+            up_num = next((i for i, result in enumerate(results) if 'downward' in result.relationship), None)
             if up_num is not None:
-                _a = (pose_results[results[up_num][0]].position[1] - pose_results[results[up_num][1]].position[1]) / (pose_results[results[up_num][0]].position[0] - pose_results[results[up_num][1]].position[0])
-                _b = pose_results[results[up_num][0]].position[1] - _a * pose_results[results[up_num][0]].position[0]
-                line = (pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((0 - _b) / _a), 0)
-                word_line = ConnectInfo((pose_results[results[up_num][0]].position[0], pose_results[results[up_num][0]].position[1]), (int((0 - _b) / _a), 0), word, pose_results[results[up_num][0]].name, 'None')
-                return line, word_line
-            elif results[0][2] == 'forward':
-                line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0)
-                word_line = ConnectInfo((pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (pose_results[results[0][0]].position[0], 0), word, pose_results[results[0][0]].name, 'None')
-                return line, word_line
+                _a = (results[up_num].position1[1] - results[up_num].position2[1]) / (results[up_num].position1[0] - results[up_num].position2[0])
+                _b = results[up_num].position1[1] - _a * results[up_num].position1[0]
+                line = ConnectInfo(results[up_num].position1, (int((0 - _b) / _a), 0), word, results[up_num].name1, 'None')
+            elif results[0].relationship == 'forward':
+                line = ConnectInfo(results[0].position1, (results[0].position1[0], 0), word, results[0].name1, 'None')
         else:
-            _a = pose_results[results[0][0]].r_matrix[1][1] / pose_results[results[0][0]].r_matrix[0][1]
-            _b = pose_results[results[0][0]].position[1] - _a * pose_results[results[0][0]].position[0]
-            line = (pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b))
-            word_line = ConnectInfo((pose_results[results[0][0]].position[0], pose_results[results[0][0]].position[1]), (0, int(_b)), word, pose_results[results[0][0]].name, 'None')
-            return line, word_line
+            _a = pose_results[results[0].detection_num].r_matrix[1][1] / pose_results[results[0].detection_num].r_matrix[0][1]
+            _b = results[0].position1[1] - _a * results[0].position1[0]
+            line = ConnectInfo(results[0].position1, (0, int(_b)), word, results[0].name1, 'None')
+        self.__isometric_results.append(line)
     
     def remain_pipes(self, pare_resutls, pose_results):
         """remain pipe"""
-        line_detects = []
-        all_results = []
         for results in pare_resutls:
-            for result in results:
-                all_results.append(ConnectInfo(pose_results[result[0]].position, pose_results[result[1]].position, result[2], pose_results[result[0]].name, pose_results[result[1]].name))
-                if (pose_results[result[1]].position, pose_results[result[0]].position) not in line_detects:
-                    line_detects.append((pose_results[result[0]].position, pose_results[result[1]].position))
-            if len(results) != pose_results[results[0][0]].pare_num:
-                keywords = ['forward', 'downward'] if pose_results[results[0][0]].name == 'bent' else ['forward', 'downward', 'upward']
-                detectwords = [result[2] for result in results]
-                keywords = [k for k in keywords if k not in detectwords]
-                for word in keywords:
-                    line, word_line = self.remain_direction(results, pose_results, word)
-                    all_results.append(word_line)
-                    if line[::-1] not in line_detects:
-                        line_detects.append(line)
-        return line_detects, all_results
+            if len(results) != results[0].detection_num:
+                detectwords = [result.relationship for result in results]
+                remainwords = [k for k in results[0].keywords if k not in detectwords]
+                for word in remainwords:
+                    self.remain_direction(results, pose_results, word)
+        # for results in pare_resutls:
+        #     for result in results:
+        #         print(result)
+        #         all_results.append(ConnectInfo(pose_results[result[0]].position, pose_results[result[1]].position, result[2], pose_results[result[0]].name, pose_results[result[1]].name))
+        #         if (pose_results[result[1]].position, pose_results[result[0]].position) not in line_detects:
+        #             line_detects.append((pose_results[result[0]].position, pose_results[result[1]].position))
+        #     if len(results) != pose_results[results[0][0]].pare_num:
+        #         keywords = ['forward', 'downward'] if pose_results[results[0][0]].name == 'bent' else ['forward', 'downward', 'upward']
+        #         detectwords = [result[2] for result in results]
+        #         keywords = [k for k in keywords if k not in detectwords]
+        #         for word in keywords:
+        #             line, word_line = self.remain_direction(results, pose_results, word)
+        #             all_results.append(word_line)
+        #             if line[::-1] not in line_detects:
+        #                 line_detects.append(line)
+        return self.__isometric_results
 
     def facing_each_other(self, pose_results) -> list:
         """find facing pipe"""
@@ -118,12 +115,15 @@ class Utils:
                     
                     if angle1 < threshold_angle and angle2 < threshold_angle:
                         except_judge.append((_p1.detection_num, _p2.detection_num))
+                        line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name)
                         if relationship == 'forward':
-                            pare_results[_p1.detection_num].append((_p1.detection_num, _p2.detection_num, relationship))
-                            pare_results[_p2.detection_num].append((_p2.detection_num, _p1.detection_num, relationship))
+                            line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name)
                         else:
-                            pare_results[_p1.detection_num].append((_p1.detection_num, _p2.detection_num, relationship))
-                            pare_results[_p2.detection_num].append((_p2.detection_num, _p1.detection_num, 'downward'))
+                            line2 = ConnectInfo(_p2.position, _p1.position, 'downward', pipe1_name=_p2.name, pipe2_name=_p1.name)
+                        pare_results[_p1.detection_num].append(line1)
+                        pare_results[_p2.detection_num].append(line2)
+                        self.__isometric_results.append(line1)
+                        self.__isometric_results.append(line2)
                         break
         return pare_results
             
