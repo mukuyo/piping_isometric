@@ -3,8 +3,9 @@ from PIL import Image, ImageDraw
 
 class Draw:
     """opencv draw class"""
-    def __init__(self) -> None:
-        self.__resolution = [640, 480]
+    def __init__(self, _cfg) -> None:
+        self.cfg = _cfg
+        self.__resolution = self.cfg['isometric']['resolution']
         self.__img_cv = Image.new('RGB', (self.__resolution[0], self.__resolution[1]), (255, 255, 255))
         self.__img_iso = Image.new('RGB', (self.__resolution[0], self.__resolution[1]), (255, 255, 255))
         self.__cv = ImageDraw.Draw(self.__img_cv)
@@ -34,24 +35,17 @@ class Draw:
     def _draw_iso_upward_only(self, point) -> None:
         self.__iso.line((point[0], point[1], point[0], 0), fill=(0, 0, 0), width=1)
 
-    def line_2d(self, results, pose_results) -> None:
+    def line_2d(self, results) -> None:
         """line_2d"""
         for result in results:
             self._draw_straight(result[0], result[1])
-        self.__img_cv.save('./data/isometric/results/2d_result.jpg')
+        self.__img_cv.save(self.cfg['isometric']['output_cv_path'])
     
-    def isometric(self, results, pose_results) -> None:
+    def isometric(self, results) -> None:
         """isometirc drawing"""
-        x: int = 0
-        y: int = 0
-        num: int = 2
-        if results[0][3] == 'junction':
-            num = 3
-        # for i in range(num):
-        pre_word = 'None'
         position = [results[0][0][0], results[0][0][1]]
         pre_position = [0, 0]
-        for i, result in enumerate(results): 
+        for result in results:
             if result[2] == 'forward':
                 if result[4] != 'None':
                     position, pre_position = self._draw_iso_forward(position)
@@ -61,18 +55,10 @@ class Draw:
                 if result[4] != 'None':
                     position[1], pre_position = self._draw_iso_downward(position)
                 else:
-                    print(pre_position)
                     self._draw_iso_downward_only(pre_position)
             elif result[2] == 'upward':
                 if result[4] != 'None':
                     position[1], pre_position = self._draw_iso_upward(position)
                 else:
                     self._draw_iso_upward_only(pre_position)
-
-            # if i < num:
-                # position = [result[0][0], result[0][1]]
-            print(result, position)
-            pre_word = result[2]
-            if i == 8:
-                break
-        self.__img_iso.save('./data/isometric/results/iso_result.jpg')
+        self.__img_iso.save(self.cfg['isometric']['output_iso_path'])

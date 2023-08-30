@@ -16,9 +16,7 @@ class Main:
     def run(self):
         """run program"""
         detection_results = self.detect.run_detect()
-        
         pose_results = self.pose.predict(results=detection_results)
-        
         self.isometric.generate_iso(pose_results)
 
 if __name__ == "__main__":
