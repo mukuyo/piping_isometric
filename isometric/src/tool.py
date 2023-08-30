@@ -3,8 +3,8 @@ from common.connect import ConnectInfo
 
 class Utils:
     """Isometric Utils"""
-    def __init__(self) -> None:
-        pass
+    def __init__(self, cfg) -> None:
+        self.cfg = cfg
 
     def isometric_transform(self, points):
         """isometric transform"""
@@ -95,8 +95,9 @@ class Utils:
                         line_detects.append(line)
         return line_detects, all_results
 
-    def facing_each_other(self, pose_results, threshold_angle=35) -> list:
+    def facing_each_other(self, pose_results) -> list:
         """find facing pipe"""
+        threshold_angle = self.cfg['isometric']['threshold_angle']
         pare_results = [[] for _ in range(len(pose_results))]
         except_judge = []
         for _p1 in pose_results:

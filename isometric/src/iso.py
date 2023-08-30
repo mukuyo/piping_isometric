@@ -5,7 +5,7 @@ from isometric.src.tool import Utils
 class Iso(Utils):
     """Isometric class"""
     def __init__(self, cfg) -> None:
-        super().__init__()
+        super().__init__(cfg)
         self.cfg = cfg
         self.__draw = Draw(self.cfg)
 
