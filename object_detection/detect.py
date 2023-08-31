@@ -12,6 +12,8 @@ class Detect():
             source=self.cfg['img_path'],
             save=True,
             conf=self.cfg['detect']['conf_val'],
+            project=self.cfg['detect']['output_path'],
+            name=self.cfg['detect']['output_name']
         )
 
         detection_results = []

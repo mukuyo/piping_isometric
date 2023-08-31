@@ -1,4 +1,4 @@
-img_path: './data/detect/datasets/pipe/test/images/3.png'
+img_path: './data/detect/datasets/pipe/test/images/1.png'
 class_num: 2
 class_name: ['bent', 't-junc']
 generate_type: 'opencv'
@@ -6,13 +6,14 @@ generate_type: 'opencv'
 detect:
   model_path: './data/detect/weights/best.pt'
   conf_val: 0.65
-  output_path: './data/detect/result/'
+  output_path: './data/detect/results/'
+  output_name: 'detect.jpg'
 
 pose:
   name: gen6d_pretrain
   type: gen6d
 
-  output_path: './data/pose/result/'
+  output_path: './data/pose/results/'
 
   detector: pose_estimate/configs/detector/detector_pretrain.yaml
   selector: pose_estimate/configs/selector/selector_pretrain.yaml
