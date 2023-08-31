@@ -9,7 +9,7 @@ class Detect():
 
     def run_detect(self) -> list:
         pred = self.__yolo_model.predict(
-            source=self.cfg['img_path'],
+            source=self.cfg['detect']['rgb_path'] + self.cfg['input_name'],
             save=True,
             conf=self.cfg['detect']['conf_val'],
             project=self.cfg['detect']['output_path'],

@@ -1,19 +1,11 @@
 import numpy as np
 from common.connect import ConnectInfo
 
-class Utils:
-    """Isometric Utils"""
+class Trans:
+    """Isometric Tools"""
     def __init__(self, cfg) -> None:
         self.cfg = cfg
         self.__isometric_results = []
-
-    def isometric_transform(self, points):
-        """isometric transform"""
-        transform_matrix = np.array([
-            [1, -1, 0],
-            [np.sqrt(2)/2, np.sqrt(2)/2, -np.sqrt(2)]
-        ]) * np.sqrt(1/3)
-        return np.dot(points, transform_matrix.T)
 
     def find_connet_pipe(self, pipe_info, all_results, isometric_line):
         """find connect pipe"""
@@ -75,21 +67,6 @@ class Utils:
                 remainwords = [k for k in results[0].keywords if k not in detectwords]
                 for word in remainwords:
                     self.remain_direction(results, pose_results, word)
-        # for results in pare_resutls:
-        #     for result in results:
-        #         print(result)
-        #         all_results.append(ConnectInfo(pose_results[result[0]].position, pose_results[result[1]].position, result[2], pose_results[result[0]].name, pose_results[result[1]].name))
-        #         if (pose_results[result[1]].position, pose_results[result[0]].position) not in line_detects:
-        #             line_detects.append((pose_results[result[0]].position, pose_results[result[1]].position))
-        #     if len(results) != pose_results[results[0][0]].pare_num:
-        #         keywords = ['forward', 'downward'] if pose_results[results[0][0]].name == 'bent' else ['forward', 'downward', 'upward']
-        #         detectwords = [result[2] for result in results]
-        #         keywords = [k for k in keywords if k not in detectwords]
-        #         for word in keywords:
-        #             line, word_line = self.remain_direction(results, pose_results, word)
-        #             all_results.append(word_line)
-        #             if line[::-1] not in line_detects:
-        #                 line_detects.append(line)
         return self.__isometric_results
 
     def facing_each_other(self, pose_results) -> list:
