@@ -38,14 +38,16 @@ class Draw:
     def line_2d(self, results) -> None:
         """line_2d"""
         for result in results:
-            self._draw_straight(result[0], result[1])
+            self._draw_straight(result.position1, result.position2)
         self.__img_cv.save(self.cfg['isometric']['output_cv_path'])
     
     def isometric(self, results) -> None:
         """isometirc drawing"""
         position = results[0].position1
         pre_position = [0, 0]
+        connect_count = 0
         for result in results:
+            connect_count += 1
             if result.relationship == 'forward':
                 if result.name2 != 'None':
                     position, pre_position = self._draw_iso_forward(position)
@@ -61,4 +63,7 @@ class Draw:
                     position[1], pre_position = self._draw_iso_upward(position)
                 else:
                     self._draw_iso_upward_only(pre_position)
+            if (result.name1 == 'bent' and connect_count == 2) or (result.name1 == 'junction' and connect_count == 3):
+                pre_position = position
+                connect_count = 0
         self.__img_iso.save(self.cfg['isometric']['output_iso_path'])
