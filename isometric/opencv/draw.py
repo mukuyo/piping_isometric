@@ -38,7 +38,7 @@ class Draw:
     def line_2d(self, results) -> None:
         """line_2d"""
         for result in results:
-            self._draw_straight(result[0], result[1])
+            self._draw_straight(result.position1, result.position2)
         self.__img_cv.save(self.cfg['isometric']['output_cv_path'])
     
     def isometric(self, results) -> None:
