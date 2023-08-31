@@ -27,5 +27,6 @@ pose:
 isometric:
   resolution: [640, 480]
   threshold_angle: 35
-  output_cv_path: './data/isometric/results/2d_result.jpg'
-  output_iso_path: './data/isometric/results/iso_result.jpg'
+  output_cv_path: './data/isometric/results/images/2d_result.jpg'
+  output_iso_path: './data/isometric/results/images/iso_result.jpg'
+  output_dxf_path: './data/isometric/results/dxf/isometric.dxf'

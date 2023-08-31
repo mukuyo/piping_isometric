@@ -1,7 +1,7 @@
 from math import pi, cos, sin
 from PIL import Image, ImageDraw
 
-class Draw:
+class DrawImage:
     """opencv draw class"""
     def __init__(self, _cfg) -> None:
         self.cfg = _cfg
