@@ -6,14 +6,14 @@ class GenDxf:
     def __init__(self, _cfg) -> None:
         self.cfg = _cfg
         self.__doc = ezdxf.new('R2010')
-        self.__doc.dimstyles.add("my_radiusdim", dxfattribs={"dimtxt":20, "dimtad":1, "dimtmove":2, "dimatfit":1, "dimfxl":10})
+        self.__doc.dimstyles.add("my_radiusdim", dxfattribs={"dimtxt":200, "dimtad":10, "dimtmove":20, "dimatfit":10, "dimfxl":100})
         self.__msp = self.__doc.modelspace()
 
     def _draw_forward(self, point1, distance):
         point2 = (int(distance*cos(pi/6)+point1[0]), int(distance*sin(pi/6)+point1[1]))
         self.__msp.add_line(point1, point2)
         self.__msp.add_linear_dim(
-            base=((point1[0] + point2[0]) / 2, point1[1] - 100),
+            base=((point1[0] + point2[0]) / 2, point1[1] - 10),
             p1=point1,
             p2=point2,
             angle=30,
@@ -46,7 +46,6 @@ class GenDxf:
         connect_count = -1
         for result in isometric_info:
             connect_count += 1
-            print(position, pre_position, result.position1, result.position2, result.relationship, result.distance, connect_count)
             if result.relationship == 'forward':
                 if result.name2 != 'None':
                     position = self._draw_forward(position, result.distance)
@@ -55,7 +54,6 @@ class GenDxf:
             elif result.relationship == 'downward':
                 if result.name2 != 'None':
                     position = self._draw_downward(position, result.distance)
-                    print(pre_position)
                 else:
                     self._draw_downward_only(pre_position, result.distance)
             elif result.relationship == 'upward':
@@ -66,5 +64,4 @@ class GenDxf:
             if (result.name1 == 'elbow' and connect_count == 1) or (result.name1 == 'tee' and connect_count == 2):
                 pre_position = position
                 connect_count = 0
-                print("")
         self.__doc.saveas(self.cfg['isometric']['output_dxf_path'])
