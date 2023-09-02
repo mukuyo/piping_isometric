@@ -6,16 +6,17 @@ class GenDxf:
     def __init__(self, _cfg) -> None:
         self.cfg = _cfg
         self.__doc = ezdxf.new('R2010')
+        self.__doc.dimstyles.add("my_radiusdim", dxfattribs={"dimtxt":20, "dimtad":1, "dimtmove":2, "dimatfit":1, "dimfxl":10})
         self.__msp = self.__doc.modelspace()
 
     def _draw_forward(self, point1, distance):
         point2 = (int(distance*cos(pi/6)+point1[0]), int(distance*sin(pi/6)+point1[1]))
         self.__msp.add_line(point1, point2)
         self.__msp.add_linear_dim(
-            base=((point1[0] + point2[0]) / 2, point1[1] - 10),
+            base=((point1[0] + point2[0]) / 2, point1[1] - 100),
             p1=point1,
             p2=point2,
-            angle=0,
+            angle=30,
             dimstyle="EZDXF",
             ).render()
         return point2
