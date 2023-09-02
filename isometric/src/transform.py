@@ -28,7 +28,7 @@ class Trans:
             all_results = [t for t in all_results if t != largest_tuple]
             pipe_info.append(largest_tuple)
             isometric_line.append(largest_tuple)
-            if i == 1 and largest_tuple.name1 == 'bent':
+            if i == 1 and largest_tuple.name1 == 'elbow':
                 break
         while all_results:
             pipe_info, all_results, isometric_line = self.find_connet_pipe(pipe_info, all_results, isometric_line)
@@ -80,11 +80,11 @@ class Trans:
                     if _p1.detection_num == _p2.detection_num or (_p2.detection_num, _p1.detection_num) in except_judge:
                         continue
                     if relationship == 'forward':
-                        direction1 = _p1.r_matrix[:, 0] if _p1.name == "bent" else -_p1.r_matrix[:, 1]
-                        direction2 = _p2.r_matrix[:, 0] if _p2.name == "bent" else -_p2.r_matrix[:, 1]
+                        direction1 = _p1.r_matrix[:, 0] if _p1.name == "elbow" else -_p1.r_matrix[:, 1]
+                        direction2 = _p2.r_matrix[:, 0] if _p2.name == "elbow" else -_p2.r_matrix[:, 1]
                     else:
-                        direction1 = _p1.r_matrix[:, 1] if _p1.name == "bent" else _p1.r_matrix[:, 2]
-                        direction2 = -_p2.r_matrix[:, 2] if _p2.name == "bent" else -_p2.r_matrix[:, 2]
+                        direction1 = _p1.r_matrix[:, 1] if _p1.name == "elbow" else _p1.r_matrix[:, 2]
+                        direction2 = -_p2.r_matrix[:, 2] if _p2.name == "elbow" else -_p2.r_matrix[:, 2]
                     vector_between_objects = np.subtract(_p2.t_matrix, _p1.t_matrix).reshape(-1)
                     vector_between_objects /= np.linalg.norm(vector_between_objects)
                     angle1 = np.arccos(np.clip(np.dot(direction1, vector_between_objects), -1.0, 1.0)) * (180 / np.pi)

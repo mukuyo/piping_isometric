@@ -41,9 +41,9 @@ class ConnectInfo:
     @property
     def connect_num(self):
         """get connect num"""
-        if self.__pipe2_name == 'bent':
+        if self.__pipe2_name == 'elbow':
             return 2
-        elif self.__pipe2_name == 'junction':
+        elif self.__pipe2_name == 'tee':
             return 3
         else:
             return 0
@@ -51,9 +51,9 @@ class ConnectInfo:
     @property
     def detection_num(self):
         """get detection num"""
-        if self.__pipe1_name == 'bent':
+        if self.__pipe1_name == 'elbow':
             return 2
-        elif self.__pipe1_name == 'junction':
+        elif self.__pipe1_name == 'tee':
             return 3
         else:
             return 0
@@ -61,9 +61,9 @@ class ConnectInfo:
     @property
     def keywords(self):
         """get keywords"""
-        if self.__pipe1_name == 'bent':
+        if self.__pipe1_name == 'elbow':
             return ['forward', 'downward']
-        elif self.__pipe1_name == 'junction':
+        elif self.__pipe1_name == 'tee':
             return ['forward', 'downward', 'upward']
         else:
             return ['forward', 'downward', 'upward']

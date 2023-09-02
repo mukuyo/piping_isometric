@@ -25,9 +25,9 @@ class Detect():
                 position = (int((_box[0].item() + _box[2].item()) / 2) , int((_box[1].item() + _box[3].item()) / 2))
                 class_num = int(box.cls.item())
                 if class_num == 0:
-                    name = "bent"
+                    name = "elbow"
                 else:
-                    name = "junction"
+                    name = "tee"
                 pipe = Pipe(name, position, size)
                 detection_results.append(pipe)
         

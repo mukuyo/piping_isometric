@@ -11,7 +11,7 @@ class Pipe:
         self.__r_matrix: ndarray = rt_matrix[:, 0:3]
         self.__t_matrix: ndarray = rt_matrix[:, 3:4]
 
-        if self.__name == 'bent':
+        if self.__name == 'elbow':
             self.__class_num = 0
             self.__pare_num = 2
         else:
