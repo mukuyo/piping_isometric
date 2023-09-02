@@ -8,27 +8,34 @@ class GenDxf:
         self.__doc = ezdxf.new('R2010')
         self.__msp = self.__doc.modelspace()
 
-    def _draw_forward(self, point, distance):
-        self.__msp.add_line(point, (distance*cos(pi/6) + point[0], distance* sin(pi/6) + point[1]))
-        return [int(distance*cos(pi/6) + point[0]), int(distance* sin(pi/6) + point[1])]
+    def _draw_forward(self, point1, distance):
+        point2 = (int(distance*cos(pi/6)+point1[0]), int(distance*sin(pi/6)+point1[1]))
+        self.__msp.add_line(point1, point2)
+        self.__msp.add_linear_dim(
+            base=((point1[0] + point2[0]) / 2, point1[1] - 10),
+            p1=point1,
+            p2=point2,
+            angle=0,
+            dimstyle="EZDXF",
+            ).render()
+        return point2
 
     def _draw_forward_only(self, point, distance) -> None:
         self.__msp.add_line(point, (distance*cos(pi/6) + point[0], distance* sin(pi/6) + point[1]))
     
     def _draw_downward(self, point, distance):
         self.__msp.add_line(point, (point[0], point[1] - distance))
-        return point[0] , point[1] - distance
+        return point[0] , int(point[1] - distance)
 
     def _draw_downward_only(self, point, distance) -> None:
         self.__msp.add_line(point, (point[0], point[1] - distance))
 
     def _draw_upward(self, point, distance):
         self.__msp.add_line(point, (point[0], point[1] + distance))
-        return point[0], point[1] + distance
+        return point[0], int(point[1] + distance)
 
     def _draw_upward_only(self, point, distance) -> None:
         self.__msp.add_line(point, (point[0], point[1] + distance))
-        # print(point, distance)
 
     def isometric(self, isometric_info):
         """generate isometric dxf"""
