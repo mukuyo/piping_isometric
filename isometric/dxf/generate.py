@@ -5,19 +5,18 @@ class GenDxf:
     """Generate dxf file"""
     def __init__(self, _cfg) -> None:
         self.cfg = _cfg
-        self.__doc = ezdxf.new('R2010')
-        self.__doc.dimstyles.add("my_radiusdim", dxfattribs={"dimtxt":200, "dimtad":10, "dimtmove":20, "dimatfit":10, "dimfxl":100})
+        self.__doc = ezdxf.new()
+        dimstyle = self.__doc.dimstyles.new('custom_dimstyle')
+        dimstyle.dxf.dimtxt = 100
         self.__msp = self.__doc.modelspace()
 
     def _draw_forward(self, point1, distance):
         point2 = (int(distance*cos(pi/6)+point1[0]), int(distance*sin(pi/6)+point1[1]))
         self.__msp.add_line(point1, point2)
         self.__msp.add_aligned_dim(
-            # base=((point1[0] + point2[0]) / 2, point1[1] - 10),
             p1=point1,
             p2=point2,
-            # angle=30,
-            distance=2,
+            distance=5,
             dimstyle="EZDXF",
             ).render()
         return point2
