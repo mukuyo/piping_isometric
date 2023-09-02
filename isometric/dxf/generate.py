@@ -7,9 +7,9 @@ class GenDxf:
         self.cfg = _cfg
         self.__doc = ezdxf.new()
         dimstyle = self.__doc.dimstyles.new('custom_dimstyle')
-        dimstyle.dxf.dimtxt = 2
+        dimstyle.dxf.dimtxt = 20
         dimstyle.dxf.dimdec = 0
-        dimstyle.dxf.dimasz = 1.0  # 矢印のサイズを0.18に設定
+        dimstyle.dxf.dimasz = 10.0  # 矢印のサイズを0.18に設定
         dimstyle.dxf.dimblk = 'ARCHTICK'
         self.__msp = self.__doc.modelspace()
 
@@ -31,7 +31,7 @@ class GenDxf:
         point2 = (point1[0], point1[1] - distance)
         self.__msp.add_line(point1, point2)
         self.__msp.add_linear_dim(
-            base=(point1[0], (point1[1] + point1[1] - distance) / 2),
+            base=(point1[0] + 10, (point1[1] + point1[1] - distance) / 2),
             p1=point1,
             p2=point2,
             angle=90,
@@ -44,6 +44,13 @@ class GenDxf:
 
     def _draw_upward(self, point1, distance):
         point2 = (point1[0], point1[1] + distance)
+        self.__msp.add_linear_dim(
+            base=(point1[0] + 10, (point1[1] + point1[1] - distance) / 2),
+            p1=point1,
+            p2=point2,
+            angle=90,
+            dimstyle="custom_dimstyle",
+        ).render()
         self.__msp.add_line(point1, point2)
         return point2
 
