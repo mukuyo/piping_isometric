@@ -30,8 +30,6 @@ class Distance:
         intrinsics.fy = 7  # Focal length y, adjust for your camera
 
         for info in trans_info:
-            if info.name2 == 'None':
-                continue
             distance = self._distance_between_two_positions(depth_image, intrinsics, info.position1, info.position2)
             info.distance_val = distance
         
