@@ -9,11 +9,11 @@ class GenDxf:
         self.__msp = self.__doc.modelspace()
 
     def _draw_forward(self, point, distance):
-        self.__msp.add_line(point, (-distance*cos(pi/6) + point[0], -distance* sin(pi/6) + point[1]))
-        return [int(-distance*cos(pi/6) + point[0]), int(-distance* sin(pi/6) + point[1])], point
+        self.__msp.add_line(point, (distance*cos(pi/6) + point[0], distance* sin(pi/6) + point[1]))
+        return [int(distance*cos(pi/6) + point[0]), int(distance* sin(pi/6) + point[1])], point
 
     def _draw_forward_only(self, point, distance) -> None:
-        self.__msp.add_line(point, (-distance*cos(pi/6) + point[0], -distance* sin(pi/6) + point[1]))
+        self.__msp.add_line(point, (distance*cos(pi/6) + point[0], distance* sin(pi/6) + point[1]))
     
     def _draw_downward(self, point, distance) -> int:
         self.__msp.add_line(point, (point[0], point[1] + distance))
@@ -27,7 +27,7 @@ class GenDxf:
         self.__msp.add_line(point, (point[0], distance))
 
     def _draw_upward_only(self, point, distance) -> None:
-        self.__msp.add_line(point, (point[0], -800))
+        self.__msp.add_line(point, (point[0], -distance))
         # print(point, distance)
 
     def isometric(self, isometric_info):
