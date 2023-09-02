@@ -27,7 +27,7 @@ class GenDxf:
         self.__msp.add_line(point, (point[0], distance))
 
     def _draw_upward_only(self, point, distance) -> None:
-        self.__msp.add_line(point, (point[0], distance))
+        self.__msp.add_line(point, (point[0], -distance))
 
     def isometric(self, isometric_info):
         """generate isometric dxf"""
