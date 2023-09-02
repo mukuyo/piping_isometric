@@ -16,8 +16,8 @@ class GenDxf:
         self.__msp.add_aligned_dim(
             p1=point1,
             p2=point2,
-            distance=5,
-            dimstyle="EZDXF",
+            distance=-10,
+            dimstyle="custom_dimstyle",
             ).render()
         return point2
 
