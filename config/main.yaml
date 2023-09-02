@@ -1,7 +1,8 @@
-input_name: '1000.png'
+input_name: '102.png'
 class_num: 2
 class_name: ['bent', 't-junc']
 generate_type: 'opencv'
+resolution: [640, 480]
 
 detect:
   rgb_path: './data/input/rgb/' 
@@ -26,7 +27,6 @@ pose:
   refine_iter: 3       
 
 isometric:
-  resolution: [640, 480]
   threshold_angle: 35
   output_cv_path: './data/isometric/results/images/2d_result.jpg'
   output_iso_path: './data/isometric/results/images/iso_result.jpg'

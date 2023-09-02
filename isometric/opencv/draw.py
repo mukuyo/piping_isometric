@@ -5,7 +5,7 @@ class DrawImage:
     """opencv draw class"""
     def __init__(self, _cfg) -> None:
         self.cfg = _cfg
-        self.__resolution = self.cfg['isometric']['resolution']
+        self.__resolution = self.cfg['resolution']
         self.__img_cv = Image.new('RGB', (self.__resolution[0], self.__resolution[1]), (255, 255, 255))
         self.__img_iso = Image.new('RGB', (self.__resolution[0], self.__resolution[1]), (255, 255, 255))
         self.__cv = ImageDraw.Draw(self.__img_cv)

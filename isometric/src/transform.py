@@ -42,9 +42,9 @@ class Trans:
             if up_num is not None:
                 _a = (results[up_num].position1[1] - results[up_num].position2[1]) / (results[up_num].position1[0] - results[up_num].position2[0])
                 _b = results[up_num].position1[1] - _a * results[up_num].position1[0]
-                line = ConnectInfo(results[up_num].position1, (int((480 - _b) / _a), 480), word, results[up_num].name1, 'None')
+                line = ConnectInfo(results[up_num].position1, (int((self.cfg['resolution'][1]-1 - _b) / _a), self.cfg['resolution'][1]-1), word, results[up_num].name1, 'None')
             elif results[0].relationship == 'forward':
-                line = ConnectInfo(results[0].position1, (results[0].position1[0], 480), word, results[0].name1, 'None')
+                line = ConnectInfo(results[0].position1, (results[0].position1[0], self.cfg['resolution'][1]-1), word, results[0].name1, 'None')
         elif 'upward' == word:
             up_num = next((i for i, result in enumerate(results) if 'downward' in result.relationship), None)
             if up_num is not None:

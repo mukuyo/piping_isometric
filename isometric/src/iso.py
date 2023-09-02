@@ -22,7 +22,7 @@ class Iso():
             isometric_info = self.__distance.get_info(sort_info)
             # self.__draw.line_2d(isometric_info)
             # self.__draw.isometric(isometric_info)
-            # self.__dxf.isometric(isometric_info)
+            self.__dxf.isometric(isometric_info)
             print("Complete making piping isometric drawing!!")
         else:
             print("Connected pipe not found")

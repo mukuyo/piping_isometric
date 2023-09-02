@@ -39,7 +39,7 @@ class Pose:
         points = []
         pose_results = []
         for i, result in enumerate(results):
-            self.img = imread(str(self.cfg['img_path']))
+            self.img = imread(self.cfg['detect']['rgb_path'] + self.cfg['input_name'])
             h, w, _ = self.img.shape
             f=np.sqrt(h**2+w**2)
             K = np.asarray([[f,0,w/2],[0,f,h/2],[0,0,1]],np.float32)

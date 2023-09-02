@@ -1,16 +1,23 @@
 class ConnectInfo:
     """pipe connect info"""
-    def __init__(self, pipe1_position, pipe2_position, relationship, pipe1_name: str = 'None', pipe2_name: str = 'None') -> None:
+    def __init__(self, pipe1_position, pipe2_position, relationship, pipe1_name: str = 'None', pipe2_name: str = 'None', distance: float = 0) -> None:
         self.__pipe1_position = pipe1_position
         self.__pipe2_position = pipe2_position
         self.__relationship = relationship
         self.__pipe1_name = pipe1_name
         self.__pipe2_name = pipe2_name
+        self.distance_val = distance
+
+    @property
+    def distance(self):
+        """get distance between two positions"""
+        return self.distance_val
 
     @property
     def position1(self):
         """get pipe1 position"""
         return self.__pipe1_position
+    
     @property
     def position2(self):
         """get pipe2 position"""
