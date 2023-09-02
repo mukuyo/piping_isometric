@@ -7,7 +7,10 @@ class GenDxf:
         self.cfg = _cfg
         self.__doc = ezdxf.new()
         dimstyle = self.__doc.dimstyles.new('custom_dimstyle')
-        dimstyle.dxf.dimtxt = 100
+        dimstyle.dxf.dimtxt = 2
+        dimstyle.dxf.dimdec = 0
+        dimstyle.dxf.dimasz = 1.0  # 矢印のサイズを0.18に設定
+        dimstyle.dxf.dimblk = 'ARCHTICK'
         self.__msp = self.__doc.modelspace()
 
     def _draw_forward(self, point1, distance):
@@ -24,16 +27,25 @@ class GenDxf:
     def _draw_forward_only(self, point, distance) -> None:
         self.__msp.add_line(point, (distance*cos(pi/6) + point[0], distance* sin(pi/6) + point[1]))
     
-    def _draw_downward(self, point, distance):
-        self.__msp.add_line(point, (point[0], point[1] - distance))
-        return point[0] , int(point[1] - distance)
+    def _draw_downward(self, point1, distance):
+        point2 = (point1[0], point1[1] - distance)
+        self.__msp.add_line(point1, point2)
+        self.__msp.add_linear_dim(
+            base=(point1[0], (point1[1] + point1[1] - distance) / 2),
+            p1=point1,
+            p2=point2,
+            angle=90,
+            dimstyle="custom_dimstyle",
+        ).render()
+        return point2
 
     def _draw_downward_only(self, point, distance) -> None:
         self.__msp.add_line(point, (point[0], point[1] - distance))
 
-    def _draw_upward(self, point, distance):
-        self.__msp.add_line(point, (point[0], point[1] + distance))
-        return point[0], int(point[1] + distance)
+    def _draw_upward(self, point1, distance):
+        point2 = (point1[0], point1[1] + distance)
+        self.__msp.add_line(point1, point2)
+        return point2
 
     def _draw_upward_only(self, point, distance) -> None:
         self.__msp.add_line(point, (point[0], point[1] + distance))
