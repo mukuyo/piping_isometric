@@ -20,14 +20,14 @@ class GenDxf:
         return point[1] + distance, point
 
     def _draw_downward_only(self, point, distance) -> None:
-        self.__msp.add_line(point, (point[0], -distance))
-        
+        self.__msp.add_line(point, (point[0], point[1] + distance))
+
     def _draw_upward(self, point, distance) -> int:
         self.__msp.add_line(point, (point[0], point[1] - distance))
         return point[1] - distance, point
 
     def _draw_upward_only(self, point, distance) -> None:
-        self.__msp.add_line(point, (point[0], distance))
+        self.__msp.add_line(point, (point[0], point[1] - distance))
         # print(point, distance)
 
     def isometric(self, isometric_info):
@@ -57,5 +57,5 @@ class GenDxf:
             if (result.name1 == 'elbow' and connect_count == 2) or (result.name1 == 'tee' and connect_count == 3):
                 pre_position = position
                 connect_count = 0
-
+                print("")
         self.__doc.saveas(self.cfg['isometric']['output_dxf_path'])
