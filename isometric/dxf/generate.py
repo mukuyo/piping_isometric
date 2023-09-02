@@ -12,11 +12,12 @@ class GenDxf:
     def _draw_forward(self, point1, distance):
         point2 = (int(distance*cos(pi/6)+point1[0]), int(distance*sin(pi/6)+point1[1]))
         self.__msp.add_line(point1, point2)
-        self.__msp.add_linear_dim(
-            base=((point1[0] + point2[0]) / 2, point1[1] - 10),
+        self.__msp.add_aligned_dim(
+            # base=((point1[0] + point2[0]) / 2, point1[1] - 10),
             p1=point1,
             p2=point2,
-            angle=30,
+            # angle=30,
+            distance=2,
             dimstyle="EZDXF",
             ).render()
         return point2
