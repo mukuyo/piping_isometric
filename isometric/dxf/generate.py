@@ -16,18 +16,18 @@ class GenDxf:
         self.__msp.add_line(point, (distance*cos(pi/6) + point[0], distance* sin(pi/6) + point[1]))
     
     def _draw_downward(self, point, distance) -> int:
-        self.__msp.add_line(point, (point[0], point[1] + distance))
-        return point[1] + distance, point
-
-    def _draw_downward_only(self, point, distance) -> None:
-        self.__msp.add_line(point, (point[0], point[1] + distance))
-
-    def _draw_upward(self, point, distance) -> int:
         self.__msp.add_line(point, (point[0], point[1] - distance))
         return point[1] - distance, point
 
-    def _draw_upward_only(self, point, distance) -> None:
+    def _draw_downward_only(self, point, distance) -> None:
         self.__msp.add_line(point, (point[0], point[1] - distance))
+
+    def _draw_upward(self, point, distance) -> int:
+        self.__msp.add_line(point, (point[0], point[1] + distance))
+        return point[1] + distance, point
+
+    def _draw_upward_only(self, point, distance) -> None:
+        self.__msp.add_line(point, (point[0], point[1] + distance))
         # print(point, distance)
 
     def isometric(self, isometric_info):
