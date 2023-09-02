@@ -7,9 +7,9 @@ class GenDxf:
         self.cfg = _cfg
         self.__doc = ezdxf.new()
         dimstyle = self.__doc.dimstyles.new('custom_dimstyle')
-        dimstyle.dxf.dimtxt = 20
+        dimstyle.dxf.dimtxt = 30
         dimstyle.dxf.dimdec = 0
-        dimstyle.dxf.dimasz = 10.0  # 矢印のサイズを0.18に設定
+        dimstyle.dxf.dimasz = 20.0  # 矢印のサイズを0.18に設定
         dimstyle.dxf.dimblk = 'ARCHTICK'
         self.__msp = self.__doc.modelspace()
 
@@ -19,7 +19,7 @@ class GenDxf:
         self.__msp.add_aligned_dim(
             p1=point1,
             p2=point2,
-            distance=-10,
+            distance=-25,
             dimstyle="custom_dimstyle",
             ).render()
         return point2
@@ -31,7 +31,7 @@ class GenDxf:
         point2 = (point1[0], point1[1] - distance)
         self.__msp.add_line(point1, point2)
         self.__msp.add_linear_dim(
-            base=(point1[0] + 10, (point1[1] + point1[1] - distance) / 2),
+            base=(point1[0] + 25, (point1[1] + point1[1] - distance) / 2),
             p1=point1,
             p2=point2,
             angle=90,
@@ -45,7 +45,7 @@ class GenDxf:
     def _draw_upward(self, point1, distance):
         point2 = (point1[0], point1[1] + distance)
         self.__msp.add_linear_dim(
-            base=(point1[0] + 10, (point1[1] + point1[1] - distance) / 2),
+            base=(point1[0] + 25, (point1[1] + point1[1] - distance) / 2),
             p1=point1,
             p2=point2,
             angle=90,
@@ -60,7 +60,7 @@ class GenDxf:
     def isometric(self, isometric_info):
         """generate isometric dxf"""
         # position = isometric_info[0].position1
-        position = (0, 0)
+        position = (100, 100)
         pre_position = (0, 0)
         connect_count = -1
         for result in isometric_info:
