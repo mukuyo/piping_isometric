@@ -24,7 +24,7 @@ class Trans:
         isometric_line = []
         pipe_info = []
         for i in range(3):
-            largest_tuple = max(all_results, key=lambda x: x.position1[0])
+            largest_tuple = min(all_results, key=lambda x: x.position1[0])
             all_results = [t for t in all_results if t != largest_tuple]
             pipe_info.append(largest_tuple)
             isometric_line.append(largest_tuple)
