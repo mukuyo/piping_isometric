@@ -10,7 +10,7 @@ class GenDxf:
         dimstyle.dxf.dimtxt = 30
         dimstyle.dxf.dimdec = 0
         dimstyle.dxf.dimasz = 20.0  # 矢印のサイズを0.18に設定
-        dimstyle.dxf.dimblk = 'ARCHTICK'
+        dimstyle.dxf.dimblk = 'DOT'
         self.__msp = self.__doc.modelspace()
 
     def _draw_forward(self, point1, distance):
@@ -61,7 +61,7 @@ class GenDxf:
         """generate isometric dxf"""
         # position = isometric_info[0].position1
         position = (100, 100)
-        pre_position = (0, 0)
+        pre_position = (100, 100)
         connect_count = -1
         for result in isometric_info:
             connect_count += 1
