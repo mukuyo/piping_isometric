@@ -1,11 +1,11 @@
 from math import pi, cos, sin
 from PIL import Image, ImageDraw
 
-class Draw:
+class DrawImage:
     """opencv draw class"""
     def __init__(self, _cfg) -> None:
         self.cfg = _cfg
-        self.__resolution = self.cfg['isometric']['resolution']
+        self.__resolution = self.cfg['resolution']
         self.__img_cv = Image.new('RGB', (self.__resolution[0], self.__resolution[1]), (255, 255, 255))
         self.__img_iso = Image.new('RGB', (self.__resolution[0], self.__resolution[1]), (255, 255, 255))
         self.__cv = ImageDraw.Draw(self.__img_cv)
@@ -63,7 +63,7 @@ class Draw:
                     position[1], pre_position = self._draw_iso_upward(position)
                 else:
                     self._draw_iso_upward_only(pre_position)
-            if (result.name1 == 'bent' and connect_count == 2) or (result.name1 == 'junction' and connect_count == 3):
+            if (result.name1 == 'elbow' and connect_count == 2) or (result.name1 == 'tee' and connect_count == 3):
                 pre_position = position
                 connect_count = 0
         self.__img_iso.save(self.cfg['isometric']['output_iso_path'])

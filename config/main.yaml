@@ -1,9 +1,11 @@
-img_path: './data/detect/datasets/pipe/test/images/1.png'
+input_name: '102.png'
 class_num: 2
 class_name: ['bent', 't-junc']
 generate_type: 'opencv'
+resolution: [640, 480]
 
 detect:
+  rgb_path: './data/input/rgb/' 
   model_path: './data/detect/weights/best.pt'
   conf_val: 0.65
   output_path: './data/detect/results/'
@@ -25,7 +27,19 @@ pose:
   refine_iter: 3       
 
 isometric:
-  resolution: [640, 480]
   threshold_angle: 35
-  output_cv_path: './data/isometric/results/2d_result.jpg'
-  output_iso_path: './data/isometric/results/iso_result.jpg'
+  output_cv_path: './data/isometric/results/images/2d_result.jpg'
+  output_iso_path: './data/isometric/results/images/iso_result.jpg'
+  output_dxf_path: './data/isometric/results/dxf/isometric.dxf'
+
+  depth_path: './data/input/depth/'
+  initial_position: 100
+
+  dimtxt: 30
+  dimdex: 0
+  dimasz: 20
+  dimblk: 'OPEN'
+  dimclrd: 3
+  dimclre: 3
+
+  dimdistance: 25

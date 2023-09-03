@@ -9,7 +9,7 @@ class Detect():
 
     def run_detect(self) -> list:
         pred = self.__yolo_model.predict(
-            source=self.cfg['img_path'],
+            source=self.cfg['detect']['rgb_path'] + self.cfg['input_name'],
             save=True,
             conf=self.cfg['detect']['conf_val'],
             project=self.cfg['detect']['output_path'],
@@ -25,9 +25,9 @@ class Detect():
                 position = (int((_box[0].item() + _box[2].item()) / 2) , int((_box[1].item() + _box[3].item()) / 2))
                 class_num = int(box.cls.item())
                 if class_num == 0:
-                    name = "bent"
+                    name = "elbow"
                 else:
-                    name = "junction"
+                    name = "tee"
                 pipe = Pipe(name, position, size)
                 detection_results.append(pipe)
         
