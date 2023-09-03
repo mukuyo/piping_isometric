@@ -33,3 +33,13 @@ isometric:
   output_dxf_path: './data/isometric/results/dxf/isometric.dxf'
 
   depth_path: './data/input/depth/'
+  initial_position: 100
+
+  dimtxt: 30
+  dimdex: 0
+  dimasz: 20
+  dimblk: 'OPEN'
+  dimclrd: 3
+  dimclre: 3
+
+  dimdistance: 25
