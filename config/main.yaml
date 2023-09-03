@@ -1,4 +1,4 @@
-input_name: '2.png'
+input_name: '100.png'
 class_num: 2
 class_name: ['bent', 't-junc']
 generate_type: 'opencv'
@@ -7,7 +7,7 @@ resolution: [640, 480]
 detect:
   rgb_path: './data/input/rgb/' 
   model_path: './data/detect/weights/best.pt'
-  conf_val: 0.65
+  conf_val: 0.7
   output_path: './data/detect/results/'
   output_name: 'detect.jpg'
 
