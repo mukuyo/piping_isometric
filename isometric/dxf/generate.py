@@ -11,6 +11,7 @@ class GenDxf:
         dimstyle.dxf.dimdec = 0
         dimstyle.dxf.dimasz = 20.0  # 矢印のサイズを0.18に設定
         dimstyle.dxf.dimblk = 'DOT'
+        dimstyle.dxf.dimclrd = 1
         self.__msp = self.__doc.modelspace()
 
     def _draw_forward(self, point1, distance):
