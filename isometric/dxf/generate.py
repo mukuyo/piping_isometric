@@ -9,9 +9,10 @@ class GenDxf:
         dimstyle = self.__doc.dimstyles.new('custom_dimstyle')
         dimstyle.dxf.dimtxt = 30
         dimstyle.dxf.dimdec = 0
-        dimstyle.dxf.dimasz = 20.0  # 矢印のサイズを0.18に設定
-        dimstyle.dxf.dimblk = 'DOT'
-        dimstyle.dxf.dimclrd = 1
+        dimstyle.dxf.dimasz = 20.0
+        dimstyle.dxf.dimblk = 'OPEN'
+        dimstyle.dxf.dimclrd = 3
+        dimstyle.dxf.dimclre = 3
         self.__msp = self.__doc.modelspace()
 
     def _draw_forward(self, point1, distance):
