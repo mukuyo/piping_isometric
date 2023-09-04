@@ -1,4 +1,4 @@
-input_name: '0.png'
+input_name: '2.png'
 class_num: 2
 class_name: ['bent', 't-junc']
 generate_type: 'opencv'
