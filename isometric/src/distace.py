@@ -9,30 +9,33 @@ class Distance:
     def __init__(self, _cfg) -> None:
         self.cfg = _cfg
 
-    def _distance_between_two_positions(self, depth_image, intrinsics, position1, position2):
-        depth_value1 = depth_image[position1[1], position1[0]] * 0.25
-        x_1, y_1, z_1 = rs.rs2_deproject_pixel_to_point(intrinsics, [float(position1[0]), float(position1[1])], depth_value1)
+    def _compute_3d_distance(self, x1, y1, x2, y2, depth_image, intrinsics):
+        depth1 = depth_image[y1, x1]
+        depth2 = depth_image[y2, x2]
 
-        depth_value2 = depth_image[position2[1], position2[0]] * 0.25
-        x_2, y_2, z_2 = rs.rs2_deproject_pixel_to_point(intrinsics, [float(position2[0]), float(position2[1])], depth_value2)
+        point1 = rs.rs2_deproject_pixel_to_point(intrinsics, [x1, y1], depth1 * 0.1)
+        point2 = rs.rs2_deproject_pixel_to_point(intrinsics, [x2, y2], depth2 * 0.1)
 
-        distance = np.sqrt((x_2 - x_1) * (x_2 - x_1) + (y_2 - y_1) * (y_2 - y_1) + (z_2 - z_1) * (z_2 - z_1))
+        distance = np.linalg.norm(np.array(point1) - np.array(point2))
         return distance
+
 
     def get_info(self, trans_info):
         """get distance information"""
-        depth_image = imread(self.cfg['isometric']['depth_path'] + self.cfg['input_name'], IMREAD_ANYDEPTH)
+        depth_image = imread(self.cfg['isometric']['depth_path'] + self.cfg['input_name'], IMREAD_UNCHANGED)
         intrinsics = rs.intrinsics()
         intrinsics.width = depth_image.shape[1]
         intrinsics.height = depth_image.shape[0]
         intrinsics.ppx = 361  # Principal point x, adjust if you have this information
         intrinsics.ppy = 242  # Principal point y, adjust if you have this information
-        intrinsics.fx = 470.324   # Focal length x, adjust for your camera
-        intrinsics.fy = 470.418  # Focal length y, adjust for your camera
+        intrinsics.fx = 470   # Focal length x, adjust for your camera
+        intrinsics.fy = 470  # Focal length y, adjust for your camera
+        intrinsics.model = rs.distortion.none
+        intrinsics.coeffs = [0.0, 0.0, 0.0, 0.0, 0.0]
 
         for info in trans_info:
-            distance = self._distance_between_two_positions(depth_image, intrinsics, info.position1, info.position2)
-            print(distance)
+            distance = self._compute_3d_distance(info.position1[0], info.position1[1], info.position2[0], info.position2[1], depth_image, intrinsics)
+            print(distance, info.relationship, info.position1, info.position2)
             info.distance_val = int(distance)
         
         return trans_info
