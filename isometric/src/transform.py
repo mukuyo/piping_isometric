@@ -58,15 +58,18 @@ class Trans:
             _b = results[0].position1[1] - _a * results[0].position1[0]
             line = ConnectInfo(results[0].position1, (0, int(_b)), word, results[0].name1, 'None')
         self.__isometric_results.append(line)
+        print(line.position1, line.position2, word)
     
     def remain_pipes(self, pare_resutls, pose_results):
         """remain pipe"""
         for results in pare_resutls:
-            if len(results) != results[0].detection_num:
-                detectwords = [result.relationship for result in results]
-                remainwords = [k for k in results[0].keywords if k not in detectwords]
-                for word in remainwords:
-                    self.remain_direction(results, pose_results, word)
+            if results:
+                if len(results) != results[0].detection_num:
+                    detectwords = [result.relationship for result in results]
+                    remainwords = [k for k in results[0].keywords if k not in detectwords]
+                    print(results[0].keywords, detectwords, remainwords)
+                    for word in remainwords:
+                        self.remain_direction(results, pose_results, word)
         return self.__isometric_results
 
     def facing_each_other(self, pose_results) -> list:
