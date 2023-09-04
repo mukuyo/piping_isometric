@@ -1,4 +1,4 @@
-input_name: '2.png'
+input_name: '0.png'
 class_num: 2
 class_name: ['bent', 't-junc']
 generate_type: 'opencv'
@@ -27,7 +27,7 @@ pose:
   refine_iter: 3       
 
 isometric:
-  threshold_angle: 30
+  threshold_angle: 50
   output_cv_path: './data/isometric/results/images/2d_result.jpg'
   output_iso_path: './data/isometric/results/images/iso_result.jpg'
   output_dxf_path: './data/isometric/results/dxf/isometric.dxf'
