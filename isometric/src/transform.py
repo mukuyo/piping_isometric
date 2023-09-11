@@ -78,7 +78,7 @@ class Trans:
         pare_results = [[] for _ in range(len(pose_results))]
         except_judge = []
         for _p1 in pose_results:
-            for relationship in ['forward', 'upward']:
+            for relationship in ['forward', 'updownward']:
                 for _p2 in pose_results:
                     if _p1.detection_num == _p2.detection_num or (_p2.detection_num, _p1.detection_num) in except_judge:
                         continue
@@ -95,11 +95,16 @@ class Trans:
                     print(angle1, angle2, relationship, _p1.position, _p2.position)
                     if abs(90 - angle1) < threshold_angle and abs(90 - angle2) < threshold_angle:
                         except_judge.append((_p1.detection_num, _p2.detection_num))
-                        line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name)
                         if relationship == 'forward':
+                            line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name)
                             line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name)
                         else:
-                            line2 = ConnectInfo(_p2.position, _p1.position, 'downward', pipe1_name=_p2.name, pipe2_name=_p1.name)
+                            if _p1.position[1] < _p2.position[1]:
+                                line1 = ConnectInfo(_p1.position, _p2.position, 'downward', pipe1_name=_p1.name, pipe2_name=_p2.name)
+                                line2 = ConnectInfo(_p2.position, _p1.position, 'upward', pipe1_name=_p2.name, pipe2_name=_p1.name)
+                            else:
+                                line1 = ConnectInfo(_p1.position, _p2.position, 'upward', pipe1_name=_p1.name, pipe2_name=_p2.name)
+                                line2 = ConnectInfo(_p2.position, _p1.position, 'downward', pipe1_name=_p2.name, pipe2_name=_p1.name)
                         pare_results[_p1.detection_num].append(line1)
                         pare_results[_p2.detection_num].append(line2)
                         self.__isometric_results.append(line1)
