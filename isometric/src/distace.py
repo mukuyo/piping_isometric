@@ -35,7 +35,7 @@ class Distance:
 
         for info in trans_info:
             distance = self._compute_3d_distance(info.position1[0], info.position1[1], info.position2[0], info.position2[1], depth_image, intrinsics)
-            print(distance, info.relationship, info.position1, info.position2)
+            print(distance, info.relationship, info.position1, info.position2, info.name2)
             info.distance_val = int(distance)
         
         return trans_info

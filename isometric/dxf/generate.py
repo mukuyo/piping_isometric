@@ -66,7 +66,7 @@ class GenDxf:
         """generate isometric dxf"""
         connect_count = -1
         for result in isometric_info:
-            print(result.distance)
+            # print(result.distance)
             connect_count += 1
             if result.relationship == 'forward':
                 if result.name2 != 'None':

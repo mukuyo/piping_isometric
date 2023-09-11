@@ -58,7 +58,7 @@ class Trans:
             _b = results[0].position1[1] - _a * results[0].position1[0]
             line = ConnectInfo(results[0].position1, (0, int(_b)), word, results[0].name1, 'None')
         self.__isometric_results.append(line)
-        print(line.position1, line.position2, word)
+        # print(line.position1, line.position2, word)
     
     def remain_pipes(self, pare_resutls, pose_results):
         """remain pipe"""
@@ -67,7 +67,7 @@ class Trans:
                 if len(results) != results[0].detection_num:
                     detectwords = [result.relationship for result in results]
                     remainwords = [k for k in results[0].keywords if k not in detectwords]
-                    print(results[0].keywords, detectwords, remainwords)
+                    # print(results[0].keywords, detectwords, remainwords)
                     for word in remainwords:
                         self.remain_direction(results, pose_results, word)
         return self.__isometric_results
@@ -83,17 +83,17 @@ class Trans:
                     if _p1.detection_num == _p2.detection_num or (_p2.detection_num, _p1.detection_num) in except_judge:
                         continue
                     if relationship == 'forward':
-                        direction1 = _p1.r_matrix[:, 0] if _p1.name == "elbow" else -_p1.r_matrix[:, 1]
-                        direction2 = _p2.r_matrix[:, 0] if _p2.name == "elbow" else -_p2.r_matrix[:, 1]
+                        direction1 = _p1.r_matrix[:, 0] if _p1.name == "elbow" else _p1.r_matrix[:, 2]
+                        direction2 = _p2.r_matrix[:, 0] if _p2.name == "elbow" else _p2.r_matrix[:, 2]
                     else:
-                        direction1 = _p1.r_matrix[:, 1] if _p1.name == "elbow" else _p1.r_matrix[:, 2]
-                        direction2 = -_p2.r_matrix[:, 2] if _p2.name == "elbow" else -_p2.r_matrix[:, 2]
+                        direction1 = _p1.r_matrix[:, 1] if _p1.name == "elbow" else _p1.r_matrix[:, 0]
+                        direction2 = -_p2.r_matrix[:, 2] if _p2.name == "elbow" else _p2.r_matrix[:, 0]
                     vector_between_objects = np.subtract(_p2.t_matrix, _p1.t_matrix).reshape(-1)
                     vector_between_objects /= np.linalg.norm(vector_between_objects)
                     angle1 = np.arccos(np.clip(np.dot(direction1, vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
                     angle2 = np.arccos(np.clip(np.dot(direction2, -vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
-                    
-                    if angle1 < threshold_angle and angle2 < threshold_angle:
+                    print(angle1, angle2, relationship, _p1.position, _p2.position)
+                    if abs(90 - angle1) < threshold_angle and abs(90 - angle2) < threshold_angle:
                         except_judge.append((_p1.detection_num, _p2.detection_num))
                         line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name)
                         if relationship == 'forward':
