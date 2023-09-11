@@ -50,13 +50,13 @@ class Trans:
             if up_num is not None:
                 _a = (results[up_num].position1[1] - results[up_num].position2[1]) / (results[up_num].position1[0] - results[up_num].position2[0])
                 _b = results[up_num].position1[1] - _a * results[up_num].position1[0]
-                line = ConnectInfo(results[up_num].position1, (int((0 - _b) / _a), 0), word, results[up_num].name1, 'None')
+                line = ConnectInfo(results[up_num].position1, (int((1 - _b) / _a), 1), word, results[up_num].name1, 'None')
             elif results[0].relationship == 'forward':
-                line = ConnectInfo(results[0].position1, (results[0].position1[0], 0), word, results[0].name1, 'None')
+                line = ConnectInfo(results[0].position1, (results[0].position1[0], 1), word, results[0].name1, 'None')
         else:
             _a = pose_results[results[0].detection_num].r_matrix[1][1] / pose_results[results[0].detection_num].r_matrix[0][1]
             _b = results[0].position1[1] - _a * results[0].position1[0]
-            line = ConnectInfo(results[0].position1, (0, int(_b)), word, results[0].name1, 'None')
+            line = ConnectInfo(results[0].position1, (1, int(_b)), word, results[0].name1, 'None')
         self.__isometric_results.append(line)
         # print(line.position1, line.position2, word)
     
@@ -92,12 +92,12 @@ class Trans:
                     vector_between_objects /= np.linalg.norm(vector_between_objects)
                     angle1 = np.arccos(np.clip(np.dot(direction1, vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
                     angle2 = np.arccos(np.clip(np.dot(direction2, -vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
-                    print(angle1, angle2, relationship, _p1.position, _p2.position)
+                    print(angle1, angle2, relationship, _p1.position, _p2.position, _p1.pose[0], _p2.pose[0])
                     if abs(90 - angle1) < threshold_angle and abs(90 - angle2) < threshold_angle:
                         except_judge.append((_p1.detection_num, _p2.detection_num))
-                        if relationship == 'forward':
-                            line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name)
-                            line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name)
+                        if relationship == 'forward':                            
+                            line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name, yaw=_p1.pose[2])
+                            line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name, yaw=_p2.pose[2])
                         else:
                             if _p1.position[1] < _p2.position[1]:
                                 line1 = ConnectInfo(_p1.position, _p2.position, 'downward', pipe1_name=_p1.name, pipe2_name=_p2.name)

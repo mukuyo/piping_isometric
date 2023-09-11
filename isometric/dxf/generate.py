@@ -19,6 +19,8 @@ class GenDxf:
         self.__pre_position = (self.cfg['isometric']['initial_position'], self.cfg['isometric']['initial_position'])
 
     def _draw_forward(self, point1, distance):
+        if distance == 0:
+            return point1
         point2 = (int(distance*cos(pi/6)+point1[0]), int(distance*sin(pi/6)+point1[1]))
         self.__msp.add_line(point1, point2)
         self.__msp.add_aligned_dim(
@@ -66,7 +68,8 @@ class GenDxf:
         """generate isometric dxf"""
         connect_count = -1
         for result in isometric_info:
-            # print(result.distance)
+            if connect_count == -1:
+                self.__yaw_remember = result.yaw
             connect_count += 1
             if result.relationship == 'forward':
                 if result.name2 != 'None':

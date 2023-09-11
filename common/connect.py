@@ -1,13 +1,20 @@
+
 class ConnectInfo:
     """pipe connect info"""
-    def __init__(self, pipe1_position, pipe2_position, relationship, pipe1_name: str = 'None', pipe2_name: str = 'None', distance: float = 0) -> None:
+    def __init__(self, pipe1_position, pipe2_position, relationship, pipe1_name: str = 'None', pipe2_name: str = 'None', distance: float = 0, yaw: float = 0) -> None:
         self.__pipe1_position = pipe1_position
         self.__pipe2_position = pipe2_position
         self.__relationship = relationship
         self.__pipe1_name = pipe1_name
         self.__pipe2_name = pipe2_name
         self.distance_val = distance
-
+        self.__yaw = yaw
+        
+    @property
+    def yaw(self):
+        """get yaw direction"""
+        return self.__yaw
+    
     @property
     def distance(self):
         """get distance between two positions"""

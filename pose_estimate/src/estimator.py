@@ -176,7 +176,7 @@ class Gen6DEstimator:
         if pose_init is None:
             # stage 1: detection
             with torch.no_grad():
-                detection_outputs = self.detector.detect_que_imgs(que_img[None])
+                # detection_outputs = self.detector.detect_que_imgs(que_img[None])
                 position = np.array((int(result.position[0]), int(result.position[1])), dtype=int)
                 scale_r2q = np.array((result.size/70), dtype=float) 
                 # position = detection_outputs['positions'][0]
