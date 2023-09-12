@@ -1,4 +1,3 @@
 data/*
-!/data/isometric/
 __pycache__
 .python-version

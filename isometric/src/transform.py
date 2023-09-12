@@ -50,23 +50,26 @@ class Trans:
             if up_num is not None:
                 _a = (results[up_num].position1[1] - results[up_num].position2[1]) / (results[up_num].position1[0] - results[up_num].position2[0])
                 _b = results[up_num].position1[1] - _a * results[up_num].position1[0]
-                line = ConnectInfo(results[up_num].position1, (int((0 - _b) / _a), 0), word, results[up_num].name1, 'None')
+                line = ConnectInfo(results[up_num].position1, (int((1 - _b) / _a), 1), word, results[up_num].name1, 'None')
             elif results[0].relationship == 'forward':
-                line = ConnectInfo(results[0].position1, (results[0].position1[0], 0), word, results[0].name1, 'None')
+                line = ConnectInfo(results[0].position1, (results[0].position1[0], 1), word, results[0].name1, 'None')
         else:
             _a = pose_results[results[0].detection_num].r_matrix[1][1] / pose_results[results[0].detection_num].r_matrix[0][1]
             _b = results[0].position1[1] - _a * results[0].position1[0]
-            line = ConnectInfo(results[0].position1, (0, int(_b)), word, results[0].name1, 'None')
+            line = ConnectInfo(results[0].position1, (1, int(_b)), word, results[0].name1, 'None')
         self.__isometric_results.append(line)
+        # print(line.position1, line.position2, word)
     
     def remain_pipes(self, pare_resutls, pose_results):
         """remain pipe"""
         for results in pare_resutls:
-            if len(results) != results[0].detection_num:
-                detectwords = [result.relationship for result in results]
-                remainwords = [k for k in results[0].keywords if k not in detectwords]
-                for word in remainwords:
-                    self.remain_direction(results, pose_results, word)
+            if results:
+                if len(results) != results[0].detection_num:
+                    detectwords = [result.relationship for result in results]
+                    remainwords = [k for k in results[0].keywords if k not in detectwords]
+                    # print(results[0].keywords, detectwords, remainwords)
+                    for word in remainwords:
+                        self.remain_direction(results, pose_results, word)
         return self.__isometric_results
 
     def facing_each_other(self, pose_results) -> list:
@@ -75,28 +78,33 @@ class Trans:
         pare_results = [[] for _ in range(len(pose_results))]
         except_judge = []
         for _p1 in pose_results:
-            for relationship in ['forward', 'upward']:
+            for relationship in ['forward', 'updownward']:
                 for _p2 in pose_results:
                     if _p1.detection_num == _p2.detection_num or (_p2.detection_num, _p1.detection_num) in except_judge:
                         continue
                     if relationship == 'forward':
-                        direction1 = _p1.r_matrix[:, 0] if _p1.name == "elbow" else -_p1.r_matrix[:, 1]
-                        direction2 = _p2.r_matrix[:, 0] if _p2.name == "elbow" else -_p2.r_matrix[:, 1]
+                        direction1 = _p1.r_matrix[:, 0] if _p1.name == "elbow" else _p1.r_matrix[:, 2]
+                        direction2 = _p2.r_matrix[:, 0] if _p2.name == "elbow" else _p2.r_matrix[:, 2]
                     else:
-                        direction1 = _p1.r_matrix[:, 1] if _p1.name == "elbow" else _p1.r_matrix[:, 2]
-                        direction2 = -_p2.r_matrix[:, 2] if _p2.name == "elbow" else -_p2.r_matrix[:, 2]
+                        direction1 = _p1.r_matrix[:, 1] if _p1.name == "elbow" else _p1.r_matrix[:, 0]
+                        direction2 = -_p2.r_matrix[:, 2] if _p2.name == "elbow" else _p2.r_matrix[:, 0]
                     vector_between_objects = np.subtract(_p2.t_matrix, _p1.t_matrix).reshape(-1)
                     vector_between_objects /= np.linalg.norm(vector_between_objects)
                     angle1 = np.arccos(np.clip(np.dot(direction1, vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
                     angle2 = np.arccos(np.clip(np.dot(direction2, -vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
-                    
-                    if angle1 < threshold_angle and angle2 < threshold_angle:
+                    print(angle1, angle2, relationship, _p1.position, _p2.position, _p1.pose[0], _p2.pose[0])
+                    if abs(90 - angle1) < threshold_angle and abs(90 - angle2) < threshold_angle:
                         except_judge.append((_p1.detection_num, _p2.detection_num))
-                        line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name)
-                        if relationship == 'forward':
-                            line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name)
+                        if relationship == 'forward':                            
+                            line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name, yaw=_p1.pose[0])
+                            line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name, yaw=_p2.pose[0])
                         else:
-                            line2 = ConnectInfo(_p2.position, _p1.position, 'downward', pipe1_name=_p2.name, pipe2_name=_p1.name)
+                            if _p1.position[1] < _p2.position[1]:
+                                line1 = ConnectInfo(_p1.position, _p2.position, 'downward', pipe1_name=_p1.name, pipe2_name=_p2.name)
+                                line2 = ConnectInfo(_p2.position, _p1.position, 'upward', pipe1_name=_p2.name, pipe2_name=_p1.name)
+                            else:
+                                line1 = ConnectInfo(_p1.position, _p2.position, 'upward', pipe1_name=_p1.name, pipe2_name=_p2.name)
+                                line2 = ConnectInfo(_p2.position, _p1.position, 'downward', pipe1_name=_p2.name, pipe2_name=_p1.name)
                         pare_results[_p1.detection_num].append(line1)
                         pare_results[_p2.detection_num].append(line2)
                         self.__isometric_results.append(line1)
