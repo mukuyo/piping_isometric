@@ -96,8 +96,8 @@ class Trans:
                     if abs(90 - angle1) < threshold_angle and abs(90 - angle2) < threshold_angle:
                         except_judge.append((_p1.detection_num, _p2.detection_num))
                         if relationship == 'forward':                            
-                            line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name, yaw=_p1.pose[2])
-                            line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name, yaw=_p2.pose[2])
+                            line1 = ConnectInfo(_p1.position, _p2.position, relationship, pipe1_name=_p1.name, pipe2_name=_p2.name, yaw=_p1.pose[0])
+                            line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name, yaw=_p2.pose[0])
                         else:
                             if _p1.position[1] < _p2.position[1]:
                                 line1 = ConnectInfo(_p1.position, _p2.position, 'downward', pipe1_name=_p1.name, pipe2_name=_p2.name)
