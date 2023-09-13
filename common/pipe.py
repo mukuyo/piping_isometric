@@ -1,11 +1,13 @@
-from numpy import ndarray
+""" Define Pipe class"""
+from numpy import ndarray # pylint: disable=import-error
+
 class Pipe:
     """pipe_info"""
-    def __init__(self, name: str, position: list, size: float, pose: list = [0, 0, 0], detection_num: int = 0, rt_matrix: ndarray = ndarray([3, 4])):
+    def __init__(self, name: str = 'None', position: list = [0, 0], size: float = 0, pose: list = [0, 0, 0], detection_num: int = 0, rt_matrix: ndarray = ndarray([3, 4])):
         self.__name: str = name
-        self.__position: list[int, int] = position
+        self.__position: list = position
         self.__size: int = size
-        self.__pose: list[float, float, float] = pose
+        self.__pose: list = pose
         self.__detection_num: int = detection_num
 
         self.__r_matrix: ndarray = rt_matrix[:, 0:3]
