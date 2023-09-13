@@ -2,11 +2,13 @@
 from ultralytics import YOLO
 from common.pipe import Pipe
 
+
 class Detect():
     """Detect class"""
     def __init__(self, conf):
         self.cfg = conf
-        self.__yolo_model = YOLO(model=self.cfg['detect']['model_path'], task='detect')
+        self.__yolo_model = YOLO(model=self.cfg['detect']['model_path'],
+                                 task='detect')
 
     def run_detect(self) -> list:
         """run pipe detection"""

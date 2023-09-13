@@ -4,14 +4,16 @@ from isometric.dxf.generate import GenDxf
 from isometric.src.transform import Trans
 from isometric.src.distace import Distance
 
+
 class Iso():
     """Isometric class"""
-    def __init__(self, cfg) -> None:
-        self.cfg = cfg
-        self.__trans = Trans(self.cfg)
-        self.__distance = Distance(self.cfg)
-        # self.__draw = DrawImage(self.cfg)
-        self.__dxf = GenDxf(self.cfg)
+    def __init__(self, cfg, logger) -> None:
+        self.__cfg = cfg
+        self.__logger = logger
+        self.__trans = Trans(self.__cfg)
+        self.__distance = Distance(self.__cfg)
+        # self.__draw = DrawImage(self.__cfg)
+        self.__dxf = GenDxf(self.__cfg)
 
     def generate_iso(self, pose_results: list) -> None:
         """generate_isometric"""
@@ -23,6 +25,6 @@ class Iso():
             # self.__draw.line_2d(isometric_info)
             # self.__draw.isometric(isometric_info)
             self.__dxf.isometric(isometric_info)
-            print("Complete making piping isometric drawing!!")
+            self.__logger.info('Complete making piping isometric drawing!!')
         else:
-            print("Connected pipe not found")
+            self.__logger.info('Connected pipe not found')
