@@ -1,5 +1,5 @@
 """This is a generate isomeric program"""
-from isometric.opencv.draw import DrawImage
+# from isometric.opencv.draw import DrawImage
 from isometric.dxf.generate import GenDxf
 from isometric.src.transform import Trans
 from isometric.src.distace import Distance
@@ -10,7 +10,7 @@ class Iso():
         self.cfg = cfg
         self.__trans = Trans(self.cfg)
         self.__distance = Distance(self.cfg)
-        self.__draw = DrawImage(self.cfg)
+        # self.__draw = DrawImage(self.cfg)
         self.__dxf = GenDxf(self.cfg)
 
     def generate_iso(self, pose_results: list) -> None:

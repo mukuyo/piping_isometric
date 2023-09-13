@@ -1,7 +1,17 @@
 """Define ConnectInfo class"""
+
+
 class ConnectInfo:
     """pipe connect info"""
-    def __init__(self, pipe1_position, pipe2_position, relationship, pipe1_name: str = 'None', pipe2_name: str = 'None', distance: float = 0, yaw: float = 0) -> None:
+    def __init__(self,
+                 pipe1_position: tuple,
+                 pipe2_position: tuple,
+                 relationship: str,
+                 pipe1_name: str = 'None',
+                 pipe2_name: str = 'None',
+                 distance: float = 0,
+                 yaw: float = 0
+                 ) -> None:
         self.__pipe1_position = pipe1_position
         self.__pipe2_position = pipe2_position
         self.__relationship = relationship
@@ -74,4 +84,3 @@ class ConnectInfo:
             return ['forward', 'downward', 'upward']
         else:
             return ['forward', 'downward', 'upward']
-        

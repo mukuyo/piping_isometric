@@ -1,5 +1,5 @@
 """ Define Pipe class"""
-from numpy import ndarray # pylint: disable=import-error
+from numpy import ndarray
 
 class Pipe:
     """pipe_info"""
@@ -24,12 +24,12 @@ class Pipe:
     def t_matrix(self) -> ndarray:
         """t_matrix"""
         return self.__t_matrix
-    
+
     @property
     def r_matrix(self) -> ndarray:
         """r_matrix"""
         return self.__r_matrix
-    
+
     @property
     def detection_num(self) -> int:
         """detection_num"""
@@ -39,12 +39,12 @@ class Pipe:
     def pare_num(self) -> int:
         """pare_num"""
         return self.__pare_num
-    
+
     @property
     def class_num(self) -> int:
         """class_num"""
         return self.__class_num
-    
+
     @property
     def name(self) -> str:
         """name"""
@@ -59,7 +59,7 @@ class Pipe:
     def size(self) -> float:
         """size"""
         return self.__size
-    
+
     @property
     def pose(self) -> list:
         """pose"""

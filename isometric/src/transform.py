@@ -1,3 +1,4 @@
+"""Define Trans class"""
 import numpy as np
 from common.connect import ConnectInfo
 
@@ -12,9 +13,11 @@ class Trans:
         _pipe_info = []
         for info in pipe_info:
             for _ in range(info.connect_num):
-                same_pipe = next((t for t in all_results if t.position1[0] == info.position2[0]), None)
+                same_pipe = next((t for t in all_results if t.position1[0] == info.position2[0]),
+                                 None)
                 all_results = [t for t in all_results if t != same_pipe]
-                if not (same_pipe.position1 == info.position2 and same_pipe.position2 == info.position1):
+                if not (same_pipe.position1 == info.position2 and
+                        same_pipe.position2 == info.position1):
                     isometric_line.append(same_pipe)
                     _pipe_info.append(same_pipe)
         return _pipe_info, all_results, isometric_line
@@ -31,14 +34,16 @@ class Trans:
             if i == 1 and largest_tuple.name1 == 'elbow':
                 break
         while all_results:
-            pipe_info, all_results, isometric_line = self.find_connet_pipe(pipe_info, all_results, isometric_line)
+            pipe_info, all_results, isometric_line = self.find_connet_pipe(pipe_info, all_results,
+                                                                           isometric_line)
 
         return isometric_line
 
     def remain_direction(self, results, pose_results, word):
         """remain direction"""
         if 'downward' == word:
-            up_num = next((i for i, result in enumerate(results) if 'upward' in result.relationship), None)
+            up_num = next((i for i, result in enumerate(results)
+                           if 'upward' in result.relationship), None)
             if up_num is not None:
                 _a = (results[up_num].position1[1] - results[up_num].position2[1]) / (results[up_num].position1[0] - results[up_num].position2[0])
                 _b = results[up_num].position1[1] - _a * results[up_num].position1[0]
