@@ -1,11 +1,13 @@
+""" Define Pipe class"""
 from numpy import ndarray
+
 class Pipe:
     """pipe_info"""
-    def __init__(self, name: str, position: list, size: float, pose: list = [0, 0, 0], detection_num: int = 0, rt_matrix: ndarray = ndarray([3, 4])):
+    def __init__(self, name: str = 'None', position: list = [0, 0], size: float = 0, pose: list = [0, 0, 0], detection_num: int = 0, rt_matrix: ndarray = ndarray([3, 4])):
         self.__name: str = name
-        self.__position: list[int, int] = position
+        self.__position: list = position
         self.__size: int = size
-        self.__pose: list[float, float, float] = pose
+        self.__pose: list = pose
         self.__detection_num: int = detection_num
 
         self.__r_matrix: ndarray = rt_matrix[:, 0:3]
@@ -22,12 +24,12 @@ class Pipe:
     def t_matrix(self) -> ndarray:
         """t_matrix"""
         return self.__t_matrix
-    
+
     @property
     def r_matrix(self) -> ndarray:
         """r_matrix"""
         return self.__r_matrix
-    
+
     @property
     def detection_num(self) -> int:
         """detection_num"""
@@ -37,12 +39,12 @@ class Pipe:
     def pare_num(self) -> int:
         """pare_num"""
         return self.__pare_num
-    
+
     @property
     def class_num(self) -> int:
         """class_num"""
         return self.__class_num
-    
+
     @property
     def name(self) -> str:
         """name"""
@@ -57,7 +59,7 @@ class Pipe:
     def size(self) -> float:
         """size"""
         return self.__size
-    
+
     @property
     def pose(self) -> list:
         """pose"""

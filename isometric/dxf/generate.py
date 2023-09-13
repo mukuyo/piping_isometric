@@ -28,7 +28,6 @@ class GenDxf:
         direction_radian = pi/6
         if direction == 0:
             direction_radian *= -1
-        print(direction_radian, direction)
         point2 = (int(distance*cos(direction_radian)+point1[0]), int(distance*sin(direction_radian)+point1[1]))
         self.__msp.add_line(point1, point2)
         self.__msp.add_aligned_dim(
@@ -94,7 +93,6 @@ class GenDxf:
             connect_count += 1
             if result.relationship == 'forward':
                 direction = self._degree_normalize(result.yaw) < self.__yaw_up_rem and self._degree_normalize(result.yaw) > self.__yaw_down_rem
-                print(self._degree_normalize(result.yaw), self.__yaw_up_rem, self.__yaw_down_rem, direction)
                 if result.name2 != 'None':
                     self.__position = self._draw_forward(point1=self.__position, distance=result.distance, direction=direction)
                 else:

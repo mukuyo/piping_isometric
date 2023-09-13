@@ -1,5 +1,7 @@
+"""Define Trans class"""
 import numpy as np
 from common.connect import ConnectInfo
+
 
 class Trans:
     """Isometric Tools"""
@@ -12,9 +14,12 @@ class Trans:
         _pipe_info = []
         for info in pipe_info:
             for _ in range(info.connect_num):
-                same_pipe = next((t for t in all_results if t.position1[0] == info.position2[0]), None)
+                same_pipe = next((t for t in all_results
+                                  if t.position1[0] == info.position2[0]),
+                                 None)
                 all_results = [t for t in all_results if t != same_pipe]
-                if not (same_pipe.position1 == info.position2 and same_pipe.position2 == info.position1):
+                if not (same_pipe.position1 == info.position2 and
+                        same_pipe.position2 == info.position1):
                     isometric_line.append(same_pipe)
                     _pipe_info.append(same_pipe)
         return _pipe_info, all_results, isometric_line
@@ -31,14 +36,16 @@ class Trans:
             if i == 1 and largest_tuple.name1 == 'elbow':
                 break
         while all_results:
-            pipe_info, all_results, isometric_line = self.find_connet_pipe(pipe_info, all_results, isometric_line)
+            pipe_info, all_results, isometric_line = self.find_connet_pipe(
+                pipe_info, all_results, isometric_line)
 
         return isometric_line
 
     def remain_direction(self, results, pose_results, word):
         """remain direction"""
         if 'downward' == word:
-            up_num = next((i for i, result in enumerate(results) if 'upward' in result.relationship), None)
+            up_num = next((i for i, result in enumerate(results)
+                           if 'upward' in result.relationship), None)
             if up_num is not None:
                 _a = (results[up_num].position1[1] - results[up_num].position2[1]) / (results[up_num].position1[0] - results[up_num].position2[0])
                 _b = results[up_num].position1[1] - _a * results[up_num].position1[0]
@@ -58,7 +65,6 @@ class Trans:
             _b = results[0].position1[1] - _a * results[0].position1[0]
             line = ConnectInfo(results[0].position1, (1, int(_b)), word, results[0].name1, 'None')
         self.__isometric_results.append(line)
-        # print(line.position1, line.position2, word)
     
     def remain_pipes(self, pare_resutls, pose_results):
         """remain pipe"""
@@ -67,7 +73,6 @@ class Trans:
                 if len(results) != results[0].detection_num:
                     detectwords = [result.relationship for result in results]
                     remainwords = [k for k in results[0].keywords if k not in detectwords]
-                    # print(results[0].keywords, detectwords, remainwords)
                     for word in remainwords:
                         self.remain_direction(results, pose_results, word)
         return self.__isometric_results
@@ -92,7 +97,6 @@ class Trans:
                     vector_between_objects /= np.linalg.norm(vector_between_objects)
                     angle1 = np.arccos(np.clip(np.dot(direction1, vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
                     angle2 = np.arccos(np.clip(np.dot(direction2, -vector_between_objects), -1.0, 1.0)) * (180 / np.pi)
-                    print(angle1, angle2, relationship, _p1.position, _p2.position, _p1.pose[0], _p2.pose[0])
                     if abs(90 - angle1) < threshold_angle and abs(90 - angle2) < threshold_angle:
                         except_judge.append((_p1.detection_num, _p2.detection_num))
                         if relationship == 'forward':                            
@@ -100,11 +104,19 @@ class Trans:
                             line2 = ConnectInfo(_p2.position, _p1.position, relationship, pipe1_name=_p2.name, pipe2_name=_p1.name, yaw=_p2.pose[0])
                         else:
                             if _p1.position[1] < _p2.position[1]:
-                                line1 = ConnectInfo(_p1.position, _p2.position, 'downward', pipe1_name=_p1.name, pipe2_name=_p2.name)
-                                line2 = ConnectInfo(_p2.position, _p1.position, 'upward', pipe1_name=_p2.name, pipe2_name=_p1.name)
+                                line1 = ConnectInfo(_p1.position, _p2.position,
+                                                    'downward',
+                                                    _p1.name, _p2.name)
+                                line2 = ConnectInfo(_p2.position, _p1.position,
+                                                    'upward',
+                                                    _p2.name, _p1.name)
                             else:
-                                line1 = ConnectInfo(_p1.position, _p2.position, 'upward', pipe1_name=_p1.name, pipe2_name=_p2.name)
-                                line2 = ConnectInfo(_p2.position, _p1.position, 'downward', pipe1_name=_p2.name, pipe2_name=_p1.name)
+                                line1 = ConnectInfo(_p1.position, _p2.position,
+                                                    'upward',
+                                                    _p1.name, _p2.name)
+                                line2 = ConnectInfo(_p2.position, _p1.position,
+                                                    'downward',
+                                                    _p2.name, _p1.name)
                         pare_results[_p1.detection_num].append(line1)
                         pare_results[_p2.detection_num].append(line2)
                         self.__isometric_results.append(line1)
