@@ -1,6 +1,7 @@
 from math import pi, cos, sin
 from PIL import Image, ImageDraw
 
+
 class DrawImage:
     """opencv draw class"""
     def __init__(self, _cfg) -> None:
@@ -15,11 +16,11 @@ class DrawImage:
         self.__cv.line((point1[0], point1[1], point2[0], point2[1]), fill=(0, 0, 0), width=1)
 
     def _draw_iso_forward(self, point):
-        self.__iso.line((point[0], point[1], -150*cos(pi/6) + point[0], -150* sin(pi/6) + point[1]), fill=(0, 0, 0), width=1)
-        return [int(-150*cos(pi/6) + point[0]), int(-150* sin(pi/6) + point[1])], point
+        self.__iso.line((point[0], point[1], -150*cos(pi/6) + point[0], -150*sin(pi/6) + point[1]), fill=(0, 0, 0), width=1)
+        return [int(-150*cos(pi/6) + point[0]), int(-150*sin(pi/6) + point[1])], point
 
     def _draw_iso_forward_only(self, point) -> None:
-        self.__iso.line((point[0], point[1], -150*cos(pi/6) + point[0], -150* sin(pi/6) + point[1]), fill=(0, 0, 0), width=1)
+        self.__iso.line((point[0], point[1], -150*cos(pi/6) + point[0], -150*sin(pi/6) + point[1]), fill=(0, 0, 0), width=1)
     
     def _draw_iso_downward(self, point) -> int:
         self.__iso.line((point[0], point[1], point[0], point[1] + 150), fill=(0, 0, 0), width=1)

@@ -2,6 +2,7 @@ import ezdxf
 from math import cos, sin, pi
 import numpy as np
 
+
 class GenDxf:
     """Generate dxf file"""
     def __init__(self, _cfg) -> None:
@@ -15,9 +16,11 @@ class GenDxf:
         dimstyle.dxf.dimclrd = self.cfg['isometric']['dimclrd']
         dimstyle.dxf.dimclre = self.cfg['isometric']['dimclre']
         self.__msp = self.__doc.modelspace()
-
-        self.__position = (self.cfg['isometric']['initial_position'], self.cfg['isometric']['initial_position'])
-        self.__pre_position = (self.cfg['isometric']['initial_position'], self.cfg['isometric']['initial_position'])
+        
+        self.__position = (self.cfg['isometric']['initial_position'],
+                           self.cfg['isometric']['initial_position'])
+        self.__pre_position = (self.cfg['isometric']['initial_position'],
+                               self.cfg['isometric']['initial_position'])
 
         self.__add_degree: float = 22.5
         self.__yaw_up_rem: float = 0
