@@ -17,10 +17,10 @@ class Distance:
 
         point1 = rs2_deproject_pixel_to_point(_intrinsics,
                                               [position1[0], position1[1]],
-                                              depth1 * 0.1)
+                                              depth1 * 0.22)
         point2 = rs2_deproject_pixel_to_point(_intrinsics,
                                               [position2[0], position2[1]],
-                                              depth2 * 0.1)
+                                              depth2 * 0.22)
 
         distance = np.linalg.norm(np.array(point1) - np.array(point2))
         return distance

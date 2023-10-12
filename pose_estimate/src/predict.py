@@ -38,8 +38,9 @@ class Pose:
     def predict(self, results: Pipe):
         points = []
         pose_results = []
+        
+        self.img = imread(self.cfg['detect']['rgb_path'] + self.cfg['input_name'])
         for i, result in enumerate(results):
-            self.img = imread(self.cfg['detect']['rgb_path'] + self.cfg['input_name'])
             h, w, _ = self.img.shape
             f=np.sqrt(h**2+w**2)
             K = np.asarray([[f,0,w/2],[0,f,h/2],[0,0,1]],np.float32)

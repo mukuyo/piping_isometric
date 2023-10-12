@@ -178,7 +178,7 @@ class Gen6DEstimator:
             with torch.no_grad():
                 # detection_outputs = self.detector.detect_que_imgs(que_img[None])
                 position = np.array((int(result.position[0]), int(result.position[1])), dtype=int)
-                scale_r2q = np.array((result.size/70), dtype=float) 
+                scale_r2q = np.array((result.size/85), dtype=float) 
                 # position = detection_outputs['positions'][0]
                 # scale_r2q = detection_outputs['scales'][0]
 
@@ -211,7 +211,7 @@ class Gen6DEstimator:
         # stage 4: refine pose
         if self.refiner is not None:
             refine_poses = [pose_pr]
-            for k in range(4):
+            for k in range(1):
                 pose_pr = self.refiner.refine_que_imgs(que_img, que_K, pose_pr, size=128, ref_num=5, ref_even=True)
                 refine_poses.append(pose_pr)
             inter_results['refine_poses'] = refine_poses
