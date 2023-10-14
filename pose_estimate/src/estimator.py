@@ -211,7 +211,7 @@ class Gen6DEstimator:
         # stage 4: refine pose
         if self.refiner is not None:
             refine_poses = [pose_pr]
-            for k in range(1):
+            for k in range(5):
                 pose_pr = self.refiner.refine_que_imgs(que_img, que_K, pose_pr, size=128, ref_num=5, ref_even=True)
                 refine_poses.append(pose_pr)
             inter_results['refine_poses'] = refine_poses

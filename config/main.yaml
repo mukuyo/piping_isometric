@@ -1,14 +1,14 @@
-input_name: '1021.jpg'
+input_name: '1000.png'
 class_num: 2
-class_name: ['bent', 'tee']
+class_name: ['elbow', 'tee']
 generate_type: 'opencv'
 resolution: [640, 480]
 # detect_method: 'pipe_net'
 detect_method: 'yolov8'
 
 detect:
-  rgb_path: './data/input/simu/rgb/' 
-  depth_path: './data/input/simu/depth/' 
+  rgb_path: './data/input/real/rgb/' 
+  depth_path: './data/input/real/depth/' 
   pipe_net:
     config_path: './config/pipe_net.yaml' 
     weights_path: './data/detect/weights/pipe_net/yolov3_015000.pth'
