@@ -28,7 +28,8 @@ if __name__ == "__main__":
     output_dir_color.mkdir(exist_ok=True)
     output_dir_depth = Path('data/capture/' + cfg['output_dir'] + '/depth')
     output_dir_depth.mkdir(exist_ok=True)
-
+    output_dir_color_depth = Path('data/capture/' + cfg['output_dir'] + '/color_depth')
+    output_dir_color_depth.mkdir(exist_ok=True)
     img_num = -1
     while True:
         # フレーム待ち(Color & Depth)
@@ -37,13 +38,19 @@ if __name__ == "__main__":
         aligned_frames = align.process(frames)
         color_frame = aligned_frames.get_color_frame()
         depth_frame = aligned_frames.get_depth_frame()
+        color_depth_frame = rs.colorizer().colorize(depth_frame)
         if not depth_frame or not color_frame:
             continue
 
         #imageをnumpy arrayに
         color_image = np.asanyarray(color_frame.get_data())
         depth_image = np.asanyarray(depth_frame.get_data())
-
+        depth_image = cv2.medianBlur(depth_image, 5)
+        
+        color_depth_image = np.asanyarray(color_depth_frame.get_data())
+        color_depth_image = cv2.medianBlur(color_depth_image, 5)
+        color_depth_image = cv2.convertScaleAbs(color_depth_image, alpha=1.0)
+        
         cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
         cv2.imshow('RealSense', color_image)
         if cv2.waitKey(1) == ord('s'):
@@ -52,6 +59,8 @@ if __name__ == "__main__":
             cv2.imwrite(str(save_path), color_image)
             save_path = output_dir_depth / f"{img_num}.png"
             cv2.imwrite(str(save_path), depth_image)
+            save_path = output_dir_color_depth / f"{img_num}.png"
+            cv2.imwrite(str(save_path), color_depth_image)
 
         if cv2.waitKey(1) & 0xff == 27:#ESCで終了
             cv2.destroyAllWindows()
