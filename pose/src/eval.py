@@ -7,12 +7,12 @@ from skimage.io import imsave
 
 from tqdm import tqdm
 
-from pose_estimate.dataset.database import parse_database_name, get_database_split, get_ref_point_cloud, get_diameter, get_object_center
-from pose_estimate.src.estimator import name2estimator
-from pose_estimate.utils.base_utils import load_cfg, save_pickle, read_pickle, project_points, transformation_crop
-from pose_estimate.utils.database_utils import compute_normalized_view_correlation
-from pose_estimate.utils.draw_utils import draw_bbox, concat_images_list, draw_bbox_3d, pts_range_to_bbox_pts
-from pose_estimate.utils.pose_utils import compute_metrics_impl, scale_rotation_difference_from_cameras
+from pose.dataset.database import parse_database_name, get_database_split, get_ref_point_cloud, get_diameter, get_object_center
+from pose.src.estimator import name2estimator
+from pose.utils.base_utils import load_cfg, save_pickle, read_pickle, project_points, transformation_crop
+from pose.utils.database_utils import compute_normalized_view_correlation
+from pose.utils.draw_utils import draw_bbox, concat_images_list, draw_bbox_3d, pts_range_to_bbox_pts
+from pose.utils.pose_utils import compute_metrics_impl, scale_rotation_difference_from_cameras
 
 
 def get_gt_info(que_pose, que_K, render_poses, render_Ks, object_center):

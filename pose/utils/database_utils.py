@@ -1,8 +1,8 @@
 import torch.nn.functional as F
 
-from pose_estimate.dataset.database import get_object_center, get_diameter, get_object_vert
-from pose_estimate.utils.base_utils import *
-from pose_estimate.utils.pose_utils import scale_rotation_difference_from_cameras, let_me_look_at, let_me_look_at_2d
+from pose.dataset.database import get_object_center, get_diameter, get_object_vert
+from pose.utils.base_utils import *
+from pose.utils.pose_utils import scale_rotation_difference_from_cameras, let_me_look_at, let_me_look_at_2d
 
 
 def look_at_crop(img, K, pose, position, angle, scale, h, w):

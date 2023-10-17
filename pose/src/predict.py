@@ -6,12 +6,12 @@ from pathlib import Path
 import numpy as np
 from skimage.io import imsave, imread
 
-from pose_estimate.dataset.database import parse_database_name, get_ref_point_cloud
-from pose_estimate.src.estimator import name2estimator
-from pose_estimate.src.eval import visualize_intermediate_results
-from pose_estimate.utils.base_utils import load_cfg, project_points
-from pose_estimate.utils.draw_utils import pts_range_to_bbox_pts, draw_bbox_3d, draw_bbox_3d_summary
-from pose_estimate.utils.pose_utils import pnp
+from pose.dataset.database import parse_database_name, get_ref_point_cloud
+from pose.src.estimator import name2estimator
+from pose.src.eval import visualize_intermediate_results
+from pose.utils.base_utils import load_cfg, project_points
+from pose.utils.draw_utils import pts_range_to_bbox_pts, draw_bbox_3d, draw_bbox_3d_summary
+from pose.utils.pose_utils import pnp
 from scipy.spatial.transform import Rotation as R
 
 from common.pipe import Pipe
@@ -29,8 +29,10 @@ class Pose:
         self.__object_bbox_3d = []
         
         for class_name in self.cfg['class_name']:
+            print("j")
             estimator = name2estimator[self.cfg['pose']['type']](self.cfg['pose'])
             estimator.build(parse_database_name('datasets/'+class_name), split_type='all')
+            print("v")
             object_bbox_3d = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name('datasets/'+class_name)),0), np.min(get_ref_point_cloud(parse_database_name('datasets/'+class_name)),0))
             self.__estimator.append(estimator)
             self.__object_bbox_3d.append(object_bbox_3d)

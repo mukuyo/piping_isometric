@@ -2,21 +2,16 @@
 from logging import getLogger, DEBUG, StreamHandler, Formatter
 import sys
 import yaml
-from object_detection.yolov8.detect import Yolov8
-from object_detection.pipe_net.detect import PipeNet
-from pose_estimate.src.predict import Pose
+from detection import create_detector
+from pose.src.predict import Pose
 from isometric.src.iso import Iso
-
 
 class Main:
     """Main class"""
     def __init__(self, _cfg, _logger):
         self.cfg = _cfg
         self.logger = _logger
-        if self.cfg['detect_method'] == 'pipe_net':
-            self.detect = PipeNet(self.cfg)
-        else:
-            self.detect = Yolov8(self.cfg)
+        self.detect = create_detector(self.cfg)
         self.pose = Pose(self.cfg)
         self.isometric = Iso(self.cfg, self.logger)
 

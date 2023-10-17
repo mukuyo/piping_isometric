@@ -4,9 +4,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 
-from pose_estimate.network.pretrain_models import VGGBNPretrain
-from pose_estimate.utils.base_utils import color_map_forward, transformation_crop, to_cpu_numpy
-from pose_estimate.utils.bbox_utils import parse_bbox_from_scale_offset
+from pose.network.pretrain_models import VGGBNPretrain
+from pose.utils.base_utils import color_map_forward, transformation_crop, to_cpu_numpy
+from pose.utils.bbox_utils import parse_bbox_from_scale_offset
 
 
 class BaseDetector(nn.Module):

@@ -10,9 +10,9 @@ import plyfile
 from PIL import Image
 from skimage.io import imread, imsave
 
-from pose_estimate.utils.base_utils import read_pickle, save_pickle, pose_compose, load_point_cloud, pose_inverse, resize_img, \
+from pose.utils.base_utils import read_pickle, save_pickle, pose_compose, load_point_cloud, pose_inverse, resize_img, \
     mask_depth_to_pts, transform_points_pose
-from pose_estimate.utils.read_write_model import read_model
+from pose.utils.read_write_model import read_model
 
 SUN_IMAGE_ROOT = 'data/SUN2012pascalformat/JPEGImages'
 SUN_IMAGE_ROOT_128 = 'data/SUN2012pascalformat/JPEGImages_128'

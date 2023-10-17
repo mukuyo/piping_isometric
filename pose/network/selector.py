@@ -4,9 +4,9 @@ import torchvision
 import numpy as np
 import torch.nn.functional as F
 
-from pose_estimate.network.attention import AttentionBlock
-from pose_estimate.network.pretrain_models import VGGBNPretrain
-from pose_estimate.utils.base_utils import color_map_forward
+from pose.network.attention import AttentionBlock
+from pose.network.pretrain_models import VGGBNPretrain
+from pose.utils.base_utils import color_map_forward
 
 
 class ViewpointSelector(nn.Module):

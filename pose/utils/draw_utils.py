@@ -1,7 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 
-from pose_estimate.utils.base_utils import compute_relative_transformation, compute_F
+from pose.utils.base_utils import compute_relative_transformation, compute_F
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt

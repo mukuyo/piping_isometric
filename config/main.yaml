@@ -1,6 +1,6 @@
-input_name: '1000.png'
+input_name: '51.png'
 class_num: 2
-class_name: ['elbow', 'tee']
+class_name: ['elbow', 'tee2']
 generate_type: 'opencv'
 resolution: [640, 480]
 # detect_method: 'pipe_net'
@@ -16,7 +16,7 @@ detect:
     output_name: 'detect.jpg'
   yolov8:
     weights_path: './data/detect/weights/yolov8/best.pt'
-    conf_val: 0.2
+    conf_val: 0.1
     output_path: './data/detect/results/yolov8/'
     output_name: 'detect.jpg'
 
@@ -26,14 +26,14 @@ pose:
 
   output_path: './data/pose/results/'
 
-  detector: pose_estimate/configs/detector/detector_pretrain.yaml
-  selector: pose_estimate/configs/selector/selector_pretrain.yaml
-  refiner:  pose_estimate/configs/refiner/refiner_pretrain.yaml
+  detector: pose/configs/detector/detector_pretrain.yaml
+  selector: pose/configs/selector/selector_pretrain.yaml
+  refiner:  pose/configs/refiner/refiner_pretrain.yaml
 
   ref_resolution: 128   
   ref_view_num: 64      
   det_ref_view_num: 32 
-  refine_iter: 3       
+  refine_iter: 5       
 
 isometric:
   threshold_angle: 15

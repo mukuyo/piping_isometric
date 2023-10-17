@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 import torch
 
-from pose_estimate.dataset.database import BaseDatabase, get_database_split, get_object_vert, get_object_center
+from pose.dataset.database import BaseDatabase, get_database_split, get_object_vert, get_object_center
 
-from pose_estimate.network import name2network
-from pose_estimate.utils.base_utils import load_cfg, transformation_offset_2d, transformation_scale_2d, \
+from pose.network import name2network
+from pose.utils.base_utils import load_cfg, transformation_offset_2d, transformation_scale_2d, \
     transformation_compose_2d, transformation_crop, transformation_rotation_2d
-from pose_estimate.utils.database_utils import select_reference_img_ids_fps, normalize_reference_views
-from pose_estimate.utils.pose_utils import estimate_pose_from_similarity_transform_compose
+from pose.utils.database_utils import select_reference_img_ids_fps, normalize_reference_views
+from pose.utils.pose_utils import estimate_pose_from_similarity_transform_compose
 
 
 def compute_similarity_transform(pts0, pts1):
@@ -176,9 +176,9 @@ class Gen6DEstimator:
         if pose_init is None:
             # stage 1: detection
             with torch.no_grad():
-                # detection_outputs = self.detector.detect_que_imgs(que_img[None])
+                detection_outputs = self.detector.detect_que_imgs(que_img[None])
                 position = np.array((int(result.position[0]), int(result.position[1])), dtype=int)
-                scale_r2q = np.array((result.size/85), dtype=float) 
+                scale_r2q = np.array((result.size/60), dtype=float) 
                 # position = detection_outputs['positions'][0]
                 # scale_r2q = detection_outputs['scales'][0]
 
@@ -211,7 +211,7 @@ class Gen6DEstimator:
         # stage 4: refine pose
         if self.refiner is not None:
             refine_poses = [pose_pr]
-            for k in range(5):
+            for k in range(3):
                 pose_pr = self.refiner.refine_que_imgs(que_img, que_K, pose_pr, size=128, ref_num=5, ref_even=True)
                 refine_poses.append(pose_pr)
             inter_results['refine_poses'] = refine_poses
