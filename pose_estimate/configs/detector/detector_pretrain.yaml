@@ -1,3 +1,0 @@
-name: detector_pretrain
-network: detector
-detection_scales: [-1.0,-0.5,0.0,0.5]

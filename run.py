@@ -2,18 +2,16 @@
 from logging import getLogger, DEBUG, StreamHandler, Formatter
 import sys
 import yaml
-from object_detection.detect import Detect
-from pose_estimate.src.predict import Pose
+from detection import create_detector
+from pose.src.predict import Pose
 from isometric.src.iso import Iso
-
 
 class Main:
     """Main class"""
     def __init__(self, _cfg, _logger):
         self.cfg = _cfg
         self.logger = _logger
-
-        self.detect = Detect(self.cfg)
+        self.detect = create_detector(self.cfg)
         self.pose = Pose(self.cfg)
         self.isometric = Iso(self.cfg, self.logger)
 
@@ -21,12 +19,11 @@ class Main:
         """run program"""
         detection_results = self.detect.run_detect()
         pose_results = self.pose.predict(results=detection_results)
-        self.isometric.generate_iso(pose_results)
+        # self.isometric.generate_iso(pose_results)
 
 
 if __name__ == "__main__":
-    fmt = Formatter("[%(levelname)s] %(asctime)s %(message)s",
-                    datefmt="%Y-%m-%d %H:%M:%S")
+    fmt = Formatter("[%(levelname)s] %(asctime)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
     logger = getLogger(__name__)
     logger.setLevel(DEBUG)
     handler = StreamHandler(sys.stderr)
@@ -42,3 +39,4 @@ if __name__ == "__main__":
 
     logger.info('start predict')
     main.run()
+    logger.info('end predict')
