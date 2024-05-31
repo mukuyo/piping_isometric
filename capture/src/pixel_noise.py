@@ -33,9 +33,12 @@ try:
             pixel_samples = [sample[y, x] for sample in pixel_data]
             pixel_std_devs[y, x] = np.std(pixel_samples)
 
-    # 各ピクセルの平均標準偏差を計算
-    mean_std_dev = np.mean(pixel_std_devs)
-    print(f"Mean Standard Deviation: {mean_std_dev}")
+    # ピクセルごとの標準偏差の値をテキストファイルに保存
+    with open("pixel_std_devs.txt", "w") as f:
+        for row in pixel_std_devs:
+            for value in row:
+                f.write(f"{value}\t")
+            f.write("\n")
 
 finally:
     # パイプラインを停止してリソースを解放
