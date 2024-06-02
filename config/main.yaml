@@ -1,4 +1,4 @@
-input_name: '51.png'
+input_name: '161.jpg'
 class_num: 2
 class_name: ['elbow', 'tee2']
 generate_type: 'opencv'
@@ -7,8 +7,8 @@ resolution: [640, 480]
 detect_method: 'yolov8'
 
 detect:
-  rgb_path: './data/input/real/rgb/' 
-  depth_path: './data/input/real/depth/' 
+  rgb_path: './data/input/rgb/' 
+  depth_path: './data/input/depth/' 
   pipe_net:
     config_path: './config/pipe_net.yaml' 
     weights_path: './data/detect/weights/pipe_net/yolov3_015000.pth'

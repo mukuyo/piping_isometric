@@ -29,10 +29,8 @@ class Pose:
         self.__object_bbox_3d = []
         
         for class_name in self.cfg['class_name']:
-            print("j")
             estimator = name2estimator[self.cfg['pose']['type']](self.cfg['pose'])
             estimator.build(parse_database_name('datasets/'+class_name), split_type='all')
-            print("v")
             object_bbox_3d = pts_range_to_bbox_pts(np.max(get_ref_point_cloud(parse_database_name('datasets/'+class_name)),0), np.min(get_ref_point_cloud(parse_database_name('datasets/'+class_name)),0))
             self.__estimator.append(estimator)
             self.__object_bbox_3d.append(object_bbox_3d)
